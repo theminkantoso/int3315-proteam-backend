@@ -1,5 +1,5 @@
 {
-  "name": "post-service",
+  "name": "chat-service",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -22,7 +22,6 @@
   "dependencies": {
     "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.0.0",
-    "@nestjs/microservices": "^9.3.10",
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/swagger": "^6.2.1",
     "reflect-metadata": "^0.1.13",

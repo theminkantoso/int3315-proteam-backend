@@ -9,7 +9,6 @@ export class AppController {
 
   @Get()
   getHello(): string {
-    this.post.emit<any>('message_printed', {"message":"post"});
-    return 'Hello World printed';
+    return 'what?';
   }
 }

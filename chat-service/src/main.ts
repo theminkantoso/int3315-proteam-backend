@@ -4,16 +4,15 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.setGlobalPrefix('/posts');
-
+  app.setGlobalPrefix('/chats');
   const config = new DocumentBuilder()
-    .setTitle('POST-SERVICE')
-    .setDescription('The POST Service description')
+    .setTitle('CHAT SERVICE')
+    .setDescription('The Chat Service description')
     .setVersion('1.0')
-    .addTag('POST-SERVICE')
+    .addTag('CHAT-SERVICE')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('/posts/api', app, document);
-  await app.listen(3001);
+  SwaggerModule.setup('chats/api', app, document);
+  await app.listen(3002);
 }
 bootstrap();

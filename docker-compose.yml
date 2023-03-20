@@ -1,0 +1,58 @@
+version: "3.8"
+services:
+  api_gateway:
+    build: ./api-gateway
+    networks:
+      - mysql
+    ports:
+      - 3000:3000
+    # links:
+    #   - chat_service
+    #   - post_service
+    # volumes:
+    #   - ./:/app
+    #   - /app/node_modules
+      # - /app/dist
+    # depends_on:
+    #   - mysql
+    
+    # env_file:
+    #   - ./.env
+
+  post_service:
+    build: ./post-service
+    networks:
+      - mysql
+    ports:
+      - 3001:3001
+    # env_file:
+    #   - ./.env
+
+  
+  chat_service:
+    build: ./chat-service
+    networks:
+      - mysql
+    ports:
+      - 3002:3002
+    # env_file:
+    #   - ./.env
+
+#   mysql:
+#     image: mysql:8.0.32
+#     environment:
+#       - MYSQL_ROOT_PASSWORD=123456
+#     ports:
+#       - 3307:3306
+#     networks:
+#       - mysql
+#     # command: --default-authentication-plugin=123456
+#     # restart: always
+    
+#     volumes:
+#       - my-datavolume:/var/lib/mysql
+# volumes:
+#   my-datavolume:
+
+networks:
+  mysql:
