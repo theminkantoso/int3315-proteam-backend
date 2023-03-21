@@ -38,21 +38,21 @@ services:
     # env_file:
     #   - ./.env
 
-#   mysql:
-#     image: mysql:8.0.32
-#     environment:
-#       - MYSQL_ROOT_PASSWORD=123456
-#     ports:
-#       - 3307:3306
-#     networks:
-#       - mysql
-#     # command: --default-authentication-plugin=123456
-#     # restart: always
+  mysql:
+    image: mysql:8.0.32
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+    ports:
+      - 3308:3306
+    networks:
+      - mysql
+    # command: --default-authentication-plugin=123456
+    # restart: always
     
-#     volumes:
-#       - my-datavolume:/var/lib/mysql
-# volumes:
-#   my-datavolume:
+    volumes:
+      - proteam-value:/var/lib/mysql
+volumes:
+  proteam-value:
 
 networks:
   mysql:
