@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as jwt from 'jsonwebtoken';
 import { User } from '../entities/user.entity';
 import { Repository } from 'typeorm';
+import { UpdateMeDto } from '../dtos/update-me.dto';
 
 @Injectable()
 export class UserService {
@@ -27,5 +28,29 @@ export class UserService {
         HttpStatus.NOT_FOUND,
       );
     }
+  }
+
+  async update(id: number, user: UpdateMeDto): Promise<User> {
+    let foundUser = await this.userRepository.findOneOrFail({
+      where: { account_id: id },
+
+    });
+    if (!foundUser) {
+      throw new HttpException(
+        `User with id ${id} not found.`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    var updated = { ...foundUser, ...user};
+    // updated.gpa = parseFloat(updated.gpa.toString());
+    // if (0 > updated.gpa || 4 < updated.gpa) {
+    //   throw new HttpException(
+    //     `GPA should only between 0 and 4`,
+    //     HttpStatus.BAD_REQUEST,
+    //   );
+    // }
+
+  return await this.userRepository.save(updated);
   }
 }

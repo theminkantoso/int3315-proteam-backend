@@ -12,6 +12,6 @@ export const mysqlConnectionConfig: TypeOrmModuleOptions = {
 //   entities: [ __dirname + 'dist/**/*.entity{.ts,.js}'],
   entities: [ __dirname + 'dist/**/*.entity{.ts,.js}'],
   synchronize: false,
-  timezone: 'utc',
+  timezone: '+07:00',
   autoLoadEntities: true,
 };

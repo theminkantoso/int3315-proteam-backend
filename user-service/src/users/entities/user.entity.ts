@@ -1,8 +1,11 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Exclude } from 'class-transformer';
 
 @Entity({ name: 'account' })
 export class User extends BaseEntity {
+  
   @PrimaryGeneratedColumn()
+  @Exclude()
   account_id: number;
 
   @Column()
@@ -12,9 +15,10 @@ export class User extends BaseEntity {
   email: string;
 
   @Column()
+  @Exclude()
   password: string;
 
-  @Column()
+  @Column({ type: 'double' })
   gpa: number;
 
   @Column()
@@ -32,6 +36,7 @@ export class User extends BaseEntity {
   @Column()
   phone: string;
 
+  @Exclude()
   @Column()
   role: number;
 

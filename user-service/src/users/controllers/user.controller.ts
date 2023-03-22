@@ -1,4 +1,5 @@
 import { UserService } from '../services/user.service';
+import { classToPlain, instanceToPlain } from 'class-transformer';
 import { Body, Controller, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -10,6 +11,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { User } from '../entities/user.entity';
+import { UpdateMeDto } from '../dtos/update-me.dto';
 
 
 @ApiTags('Personal Profile')
@@ -33,17 +35,19 @@ export class UserController {
   @ApiNotFoundResponse({ status: 404, description: 'User not found' })
   // @UseGuards(JwtAuthGuard)
   @Get()
-  async GetMe(): Promise<User> {
+  async GetMe(): Promise<any> {
     // const decoded =  this.userService.decodeJwt('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw');
     //   console.log(decoded.sub);
-    return this.userService.getOneById(parseInt('1'));
+    var user = await this.userService.getOneById(parseInt('1'));
+    var user2 = instanceToPlain(user);
+    return user2;
   }
 
   @Patch()
   async update(
     // @Param('id', ParseIntPipe) id: number,
-    @Body() product: UpdateProductDto,
-  ): Promise<Product> {
-    return this.productsService.update(id, product);
+    @Body() updateDTO: UpdateMeDto,
+  ) {
+    return this.userService.update(parseInt('1'), updateDTO);
   }
 }
