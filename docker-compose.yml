@@ -33,20 +33,20 @@ services:
     ports:
       - 3002:3002
 
-  post_service:
-    build: ./post-service
-    networks:
-      - mysql
-    ports:
-      - 3003:3003
+  # post_service:
+  #   build: ./post-service
+  #   networks:
+  #     - mysql
+  #   ports:
+  #     - 3003:3003
 
   
-  chat_service:
-    build: ./chat-service
-    networks:
-      - mysql
-    ports:
-      - 3004:3004
+  # chat_service:
+  #   build: ./chat-service
+  #   networks:
+  #     - mysql
+  #   ports:
+  #     - 3004:3004
 
 #   mysql:
 #     image: mysql:8.0.32
