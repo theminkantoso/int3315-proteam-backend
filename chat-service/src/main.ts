@@ -13,6 +13,6 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('chats/api', app, document);
-  await app.listen(3002);
+  await app.listen(3004);
 }
 bootstrap();
