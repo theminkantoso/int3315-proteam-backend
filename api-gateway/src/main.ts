@@ -19,12 +19,12 @@ async function bootstrap() {
 
   // Proxy endpoints
   app.use('/auth', createProxyMiddleware({
-    target: POST_SERVICE_URL,
+    target: AUTH_SERVICE_URL,
     changeOrigin: true,
   }));
 
   app.use('/user', createProxyMiddleware({
-    target: POST_SERVICE_URL,
+    target: USER_SERVICE_URL,
     changeOrigin: true,
   }));
 
