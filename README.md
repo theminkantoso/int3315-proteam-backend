@@ -11,10 +11,10 @@ Có 6 service
 ```...```
 ```mysql``` chạy port 3008 ở local
 
-##Swagger
+## Swagger
 ```localhost:3000/api```
 ```USER_SERVICE``` chạy port 3002 với prefix ```localhost:3000/user/api```
 
-##mysql
+## mysql
 Tạo CSDL ```proteam``` trong localhost:3308 ```root-123456```
 Thêm dữ liệu từ file ```proteam.sql```
