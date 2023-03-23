@@ -6,25 +6,16 @@ services:
       - mysql
     ports:
       - 3000:3000
-    # links:
-    #   - chat_service
-    #   - post_service
-    # volumes:
-    #   - ./:/app
-    #   - /app/node_modules
-      # - /app/dist
-    # depends_on:
-    #   - mysql
     
     # env_file:
     #   - ./.env
 
-  auth_service:
-    build: ./auth-service
-    networks:
-      - mysql
-    ports:
-      - 3001:3001
+  # auth_service:
+  #   build: ./auth-service
+  #   networks:
+  #     - mysql
+  #   ports:
+  #     - 3001:3001
 
   user_service:
     build: ./user-service
@@ -32,6 +23,8 @@ services:
       - mysql
     ports:
       - 3002:3002
+    depends_on:
+      - mysql
 
   # post_service:
   #   build: ./post-service
@@ -48,19 +41,19 @@ services:
   #   ports:
   #     - 3004:3004
 
-#   mysql:
-#     image: mysql:8.0.32
-#     environment:
-#       - MYSQL_ROOT_PASSWORD=123456
-#     ports:
-#       - 3308:3306
-#     networks:
-#       - mysql
+  mysql:
+    image: mysql:8.0.32
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+    ports:
+      - 3308:3306
+    networks:
+      - mysql
     
-#     volumes:
-#       - proteam-value:/var/lib/mysql
-# volumes:
-#   proteam-value:
+    volumes:
+      - proteam-value:/var/lib/mysql
+volumes:
+  proteam-value:
 
 networks:
   mysql:

@@ -4,7 +4,7 @@ const port: number = parseInt(<string>process.env.PORT) || 3306;
 
 export const mysqlConnectionConfig: TypeOrmModuleOptions = {
   type: 'mysql',
-  host: 'localhost',
+  host: 'mysql',
   port: port,
   username: 'root',
   password: '123456',
