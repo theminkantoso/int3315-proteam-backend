@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.32, for Win64 (x86_64)
 --
--- Host: localhost    Database: proteam
+-- Host: 127.0.0.1    Database: proteam
 -- ------------------------------------------------------
 -- Server version	8.0.32
 
@@ -19,6 +19,7 @@
 -- Table structure for table `account`
 --
 USE proteam;
+
 
 DROP TABLE IF EXISTS `account`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -39,7 +40,7 @@ CREATE TABLE `account` (
   PRIMARY KEY (`account_id`),
   KEY `name` (`name`),
   KEY `school` (`school`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -48,7 +49,7 @@ CREATE TABLE `account` (
 
 LOCK TABLES `account` WRITE;
 /*!40000 ALTER TABLE `account` DISABLE KEYS */;
-INSERT INTO `account` VALUES (1,'pham','abc@gmail.com','$2b$10$3eJctAvM4M152cscdwbtj.ZtJ891kDU/ALXe333I0Na4WdCMqm5wO',3.21,'UET','IT','www.b.a.com','linkedin.com','01235',0,'link.com');
+INSERT INTO `account` VALUES (1,'pham','abc@gmail.com','$2b$10$qH0hVjno/.SRCWBArUgfD.xkolTN9g0gPEGqSqJd0DrDLOxxqwn9W',3.21,'UET','IT','www.b.a.com','linkedin.com','01235',0,'link.com'),(2,'tran','tran@gmail.com','$2b$10$qH0hVjno/.SRCWBArUgfD.xkolTN9g0gPEGqSqJd0DrDLOxxqwn9W',2.42,'UED','Giaoduc','www.siu.com','linkedin.com/siu','0294085',0,'siu.com'),(3,'le','abcd@gmail.com','$2b$10$qH0hVjno/.SRCWBArUgfD.xkolTN9g0gPEGqSqJd0DrDLOxxqwn9W',4,'UEB','Kinthe','www.eco.com',NULL,NULL,0,NULL);
 /*!40000 ALTER TABLE `account` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -108,12 +109,12 @@ DROP TABLE IF EXISTS `friend_follow`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `friend_follow` (
-  `id` int NOT NULL AUTO_INCREMENT,
   `account_id` int NOT NULL,
   `friend_id` int NOT NULL,
   `status` int NOT NULL DEFAULT '1' COMMENT '1 follow, 2 friend, 3 friend request',
+  `id` int NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -122,6 +123,7 @@ CREATE TABLE `friend_follow` (
 
 LOCK TABLES `friend_follow` WRITE;
 /*!40000 ALTER TABLE `friend_follow` DISABLE KEYS */;
+INSERT INTO `friend_follow` VALUES (1,2,1,1);
 /*!40000 ALTER TABLE `friend_follow` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -285,4 +287,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-03-23 15:41:00
+-- Dump completed on 2023-03-24  1:49:54

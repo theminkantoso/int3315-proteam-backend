@@ -7,12 +7,15 @@ import { Repository } from 'typeorm';
 import { UpdateMeDto } from '../dtos/update-me.dto';
 import { UpdatePasswordDto } from '../dtos';
 import * as bcrypt from 'bcrypt';
+import { FriendFollow } from '../entities/friend_follow.entity';
 
 
 @Injectable()
 export class UserService {
+  
   constructor(private readonly jwtService: JwtService,
-    @InjectRepository(User) private userRepository: Repository<User>) {}
+    @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(FriendFollow) private friendRepository: Repository<FriendFollow>) {}
 
   decodeJwt(token_in: string) {
     const decodedJwt = this.jwtService.decode(token_in);
@@ -78,5 +81,15 @@ export class UserService {
     // var updated = { ...foundUser, ...new_password};
 
   return await this.userRepository.save(foundUser);
+  }
+
+  async areFriend(userid: number, otherid: number): Promise<boolean> {
+    let result = await this.friendRepository.createQueryBuilder('friend_follow')
+    .where('friend_follow.status = 1 AND friend_follow.account_id = :userid AND friend_follow.friend_id = :otherid', {userid: userid, otherid: otherid})
+    .getOne();
+    if (!result) {
+      return false;
+    } 
+    else {return true;}
   }
 }
