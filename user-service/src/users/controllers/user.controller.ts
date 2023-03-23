@@ -43,11 +43,14 @@ export class UserController {
     return user2;
   }
 
+  @ApiOperation({ summary: 'Update personal profile' })
+  @ApiResponse({ status: 200, description: 'Updated profile' })
+  @ApiNotFoundResponse({ status: 404, description: 'User not found' })
   @Patch()
   async update(
     // @Param('id', ParseIntPipe) id: number,
     @Body() updateDTO: UpdateMeDto,
   ) {
-    return this.userService.update(parseInt('1'), updateDTO);
+    return instanceToPlain(this.userService.update(parseInt('1'), updateDTO));
   }
 }
