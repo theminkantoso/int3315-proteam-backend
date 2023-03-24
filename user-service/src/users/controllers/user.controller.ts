@@ -35,7 +35,7 @@ export class UserController {
   @ApiResponse({ status: 200, description: 'Current user profile' })
   @ApiNotFoundResponse({ status: 404, description: 'User not found' })
   @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt'))
+  // @UseGuards(AuthGuard('jwt'))
   @Get()
   async GetMe(): Promise<any> {
     // const decoded =  this.userService.decodeJwt('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw');

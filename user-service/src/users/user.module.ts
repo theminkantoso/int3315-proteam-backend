@@ -10,10 +10,12 @@ import { User } from '../users/entities/user.entity';
 import { FriendFollow } from './entities/friend_follow.entity';
 import { FriendController } from './controllers/friend.controller';
 import { JwtStrategy } from 'src/common';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User, FriendFollow]), 
-    JwtModule.register({})],
+    JwtModule.register({}),
+    PassportModule],
   controllers: [UserController, FriendController],
   providers: [UserService, JwtService, FriendFollowService, JwtStrategy],
   exports: [UserModule]
