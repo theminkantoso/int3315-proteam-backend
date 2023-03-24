@@ -8,7 +8,7 @@ export const mysqlConnectionConfig: TypeOrmModuleOptions = {
   host: 'mysql',
   port: port,
   username: 'root',
-  password: '123456',
+  password: '',
   database: 'proteam',
 //   entities: [ __dirname + 'dist/**/*.entity{.ts,.js}'],
   entities: [ __dirname + 'dist/**/*.entity{.ts,.js}'],
