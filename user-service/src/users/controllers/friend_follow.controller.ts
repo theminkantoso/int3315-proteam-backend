@@ -73,36 +73,4 @@
 //     return instanceToPlain(this.friendFollowService.saveFriendFollow(id, friendRequestDto));
 //   }
 
-//   @ApiOperation({ summary: 'Accept friend request (jwt required)'})
-//   @ApiResponse({ status: 200, description: 'message' })
-//   @ApiNotFoundResponse({ status: 404, description: 'User not found' })
-//   @ApiBadRequestResponse({ status: 400, description: '' })
-//   // @UseGuards(JwtAuthGuard)
-//   @Patch('accept-friend')
-//   async acceptFriend( @Body() acceptFriend: AcceptFriendDto) {
-//     let id = 3;
-//     return instanceToPlain(this.friendFollowService.updateFriendFollow(id, acceptFriend));
-//   }
-
-//   @ApiOperation({ summary: 'Unfriend request (jwt required)'})
-//   @ApiResponse({ status: 200, description: 'message' })
-//   @ApiNotFoundResponse({ status: 404, description: 'User not found' })
-//   @ApiBadRequestResponse({ status: 400, description: '' })
-//   // @UseGuards(JwtAuthGuard)
-//   @Delete('unfriend')
-//   async unfriend( @Body() unfriend: UnfriendDto) {
-//     let id = 1;
-//     return instanceToPlain(this.friendFollowService.unfriend(id, unfriend));
-//   }
-
-//   // @ApiOperation({ summary: 'Get list friend request (jwt required)' })
-//   // @ApiResponse({ status: 200, description: 'List friend request' })
-//   // @ApiNotFoundResponse({ status: 404, description: 'User not found' })
-//   // @ApiBadRequestResponse({ status: 400, description: '' })
-//   // // @UseGuards(JwtAuthGuard)
-//   // @Get('list-friend-request')
-//   // async listFriendRequest() {
-//   //   let id = 1;
-//   //   return instanceToPlain(this.friendFollowService.saveFriendFollow(id, friendRequestDto));
-//   // }
-
+}

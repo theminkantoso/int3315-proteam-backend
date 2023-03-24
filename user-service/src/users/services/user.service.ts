@@ -1,3 +1,5 @@
+import { Skill } from './../entities/skill.entity';
+import { UpdateSkillsDto } from './../dtos/update_skills.dto';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -6,8 +8,11 @@ import { User } from '../entities/user.entity';
 import { Repository } from 'typeorm';
 import { UpdateMeDto } from '../dtos/update-me.dto';
 // import { UpdatePasswordDto } from '../dtos';
-import * as bcrypt from 'bcrypt';
+// import * as bcrypt from 'bcrypt';
 import { FriendFollow } from '../entities/friend_follow.entity';
+import { SkillAccountDto } from '../dtos/skill_account.dto';
+import * as bcrypt from 'bcrypt';
+import { SkillAccount } from '../entities/skill_account.entity';
 
 
 @Injectable()
@@ -15,7 +20,9 @@ export class UserService {
   
   constructor(private readonly jwtService: JwtService,
     @InjectRepository(User) private userRepository: Repository<User>,
-    @InjectRepository(FriendFollow) private friendRepository: Repository<FriendFollow>) {}
+    @InjectRepository(FriendFollow) private friendRepository: Repository<FriendFollow>
+    @InjectRepository(SkillAccount) private skillAccountRepository: Repository<SkillAccount>,
+    @InjectRepository(Skill) private skillRepository: Repository<Skill>) {}
 
   decodeJwt(token_in: string) {
     const decodedJwt = this.jwtService.decode(token_in);
@@ -111,4 +118,81 @@ export class UserService {
     andWhere('friend_follow.account_id = :userid', {userid: userid}).
     getMany();
   }
+  
+  async updateSkills(id: number, skills: UpdateSkillsDto ): Promise<String> {
+    try {
+      if(skills.skills.length <= 0) {
+        throw new HttpException(
+          `Array skills is empty.`,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+        var user = await this.userRepository.findOne({
+            where: { account_id: id },
+          });
+        if(!user) {
+            throw new HttpException(
+                `User with id ${id} not found.`,
+                HttpStatus.NOT_FOUND,
+              );
+        } else {
+            await this.skillAccountRepository.delete({account_id: id});
+
+            let count = await this.skillRepository
+             .createQueryBuilder("skill")
+             .where("skill_id IN (:list)", { list: skills.skills })
+             .getCount();
+
+            if(count >= 0 && count === skills.skills.length) {
+              for(let i = 0; i < count; i++) {
+                let skillAcc: SkillAccountDto = { skill_id: skills.skills[i], account_id: id};
+                await this.skillAccountRepository.insert(skillAcc);
+              }
+              return "Update user skills successfully."
+            } else {
+              throw new HttpException(
+                `Has skill with id not found.`,
+                HttpStatus.BAD_REQUEST,
+              );
+            }
+        }
+    } catch (err) {
+        console.log('error: ', err.message ?? err);
+        throw new HttpException(
+          err.message,
+          err.HttpStatus
+        );
+    }
+  }
+
+  async getSkills(id: number ): Promise<Skill[]> {
+    try {
+      var user = await this.userRepository.findOne({
+        where: { account_id: id },
+      });
+      if(!user) {
+          throw new HttpException(
+              `User with id ${id} not found.`,
+              HttpStatus.NOT_FOUND,
+            );
+      } else {
+          let skills = await this.skillRepository
+          .createQueryBuilder("skill")
+          .where("skill_id in (select skill_id from skill_account where account_id=:account_id)", {account_id: id})
+          .getRawMany();
+          if(!skills)  {
+            return [];
+          } else {
+            return skills;
+          }
+        }
+    } catch (err) {
+        console.log('error: ', err.message ?? err);
+        throw new HttpException(
+          err.message,
+          err.HttpStatus
+        );
+    }
+  }
+
 }

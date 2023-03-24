@@ -195,25 +195,4 @@ export class FriendFollowService {
             );
         }
     }
-
-    // async listFriendRequest(id: number): Promise<Array<>> {
-    //     try {
-    //         var user = await this.userRepository.findOne({
-    //             where: { account_id: id },
-    //           });
-    //         if(!user) {
-    //             throw new HttpException(
-    //                 `User with id ${id} not found.`,
-    //                 HttpStatus.NOT_FOUND,
-    //               );
-    //         } else {
-    //         }
-    //     } catch (err) {
-    //         console.log('error: ', err.message ?? err);
-    //         throw new HttpException(
-    //           err.message,
-    //           err.HttpStatus
-    //         );
-    //     }
-    // }
 }
