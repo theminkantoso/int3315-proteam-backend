@@ -10,12 +10,12 @@ services:
         # env_file:
         #   - ./.env
 
-    auth_service:
-        build: ./auth-service
-        networks:
-            - mysql
-        ports:
-            - 3001:3001
+    # auth_service:
+    #     build: ./auth-service
+    #     networks:
+    #         - mysql
+    #     ports:
+    #         - 3001:3001
 
     user_service:
         build: ./user-service
