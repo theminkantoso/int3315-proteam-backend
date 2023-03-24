@@ -1,3 +1,4 @@
+import { UpdateSkillsDto } from '../dtos/update_skills.dto';
 import { UserService } from '../services/user.service';
 import { classToPlain, instanceToPlain } from 'class-transformer';
 import { Body, Controller, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
@@ -53,4 +54,23 @@ export class UserController {
   ) {
     return instanceToPlain(this.userService.update(parseInt('1'), updateDTO));
   }
+
+  @ApiOperation({ summary: 'update user skills' })
+  @ApiResponse({ status: 200, description: 'Updated skills' })
+  @ApiNotFoundResponse({ status: 404, description: 'User not found' })
+  @Patch("update-skills")
+  async updateSkills(@Body() skills: UpdateSkillsDto) {
+    let id = 1;
+    return instanceToPlain(this.userService.updateSkills(id, skills));
+  }
+
+  @ApiOperation({ summary: 'get user skills' })
+  @ApiResponse({ status: 200, description: 'user skills' })
+  @ApiNotFoundResponse({ status: 404, description: 'User not found' })
+  @Patch("skills")
+  async skills() {
+    let id = 1;
+    return instanceToPlain(this.userService.getSkills(id));
+  }
+
 }

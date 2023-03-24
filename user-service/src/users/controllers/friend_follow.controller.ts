@@ -56,15 +56,4 @@ export class FriendFollowController {
     return instanceToPlain(this.friendFollowService.unfriend(id, unfriend));
   }
 
-  // @ApiOperation({ summary: 'Get list friend request (jwt required)' })
-  // @ApiResponse({ status: 200, description: 'List friend request' })
-  // @ApiNotFoundResponse({ status: 404, description: 'User not found' })
-  // @ApiBadRequestResponse({ status: 400, description: '' })
-  // // @UseGuards(JwtAuthGuard)
-  // @Get('list-friend-request')
-  // async listFriendRequest() {
-  //   let id = 1;
-  //   return instanceToPlain(this.friendFollowService.saveFriendFollow(id, friendRequestDto));
-  // }
-
 }
