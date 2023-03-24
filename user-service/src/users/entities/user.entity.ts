@@ -5,7 +5,6 @@ import { Exclude } from 'class-transformer';
 export class User extends BaseEntity {
   
   @PrimaryGeneratedColumn()
-  @Exclude()
   account_id: number;
 
   @Column()
@@ -36,8 +35,8 @@ export class User extends BaseEntity {
   @Column()
   phone: string;
 
-  @Exclude()
   @Column()
+  @Exclude()
   role: number;
 
   @Column()

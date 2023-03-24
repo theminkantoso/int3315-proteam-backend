@@ -12,6 +12,7 @@ import {
 } from '@nestjs/swagger';
 import { User } from '../entities/user.entity';
 import { UpdateMeDto } from '../dtos/update-me.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 
 @ApiTags('Personal Profile')
@@ -33,7 +34,8 @@ export class UserController {
   @ApiOperation({ summary: 'Get personal profile' })
   @ApiResponse({ status: 200, description: 'Current user profile' })
   @ApiNotFoundResponse({ status: 404, description: 'User not found' })
-  // @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
   @Get()
   async GetMe(): Promise<any> {
     // const decoded =  this.userService.decodeJwt('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw');
