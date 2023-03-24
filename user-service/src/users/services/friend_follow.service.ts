@@ -1,3 +1,4 @@
+import { UnfriendDto } from './../dtos/friend_follow/unfriend.dto';
 import { FriendRequestDto } from './../dtos/friend_follow/friend_request.dto';
 import { AcceptFriendDto } from './../dtos/friend_follow/accept_friend.dto';
 import { FriendFollowDto } from './../dtos/friend_follow/friend_follow.dto';
@@ -20,37 +21,6 @@ export class FriendFollowService {
         const decodedJwt = this.jwtService.decode(token_in);
         return decodedJwt;
     }
-
-    // async getById(id: number, idFriend: number ): Promise<Boolean> {
-    //     try {
-    //         var user = await this.userRepository.findOne({
-    //             where: { account_id: id },
-    //           });
-    //         var friend = await this.userRepository.findOne({
-    //             where: { account_id: idFriend },
-    //           });
-    
-    //         if(!user) {
-    //             throw new HttpException(
-    //                 `User with id ${id} not found.`,
-    //                 HttpStatus.NOT_FOUND,
-    //               );
-    //         }
-    //         if(!friend) {
-    //             throw new HttpException(
-    //                 `User with id ${idFriend} not found.`,
-    //                 HttpStatus.NOT_FOUND,
-    //               );
-    //         }
-    //         return true;
-    //     } catch (err) {
-    //         console.log('error: ', err.message ?? err);
-    //         throw new HttpException(
-    //           err.message,
-    //           err.HttpStatus
-    //         );
-    //     }
-    // }
 
     async saveFriendFollow(id: number, friendRequestDto: FriendRequestDto ): Promise<String> {
         try {
@@ -159,7 +129,7 @@ export class FriendFollowService {
                     }
                 } else {
                     throw new HttpException(
-                        `FriendFollow with id ${accept.id} not found.`,
+                        `FriendFollow not found.`,
                         HttpStatus.NOT_FOUND,
                       );
                 }
@@ -172,4 +142,78 @@ export class FriendFollowService {
             );
         }
     }
+
+    async unfriend(id: number, unfriend: UnfriendDto ): Promise<String> {
+        try {
+            var me = await this.userRepository.findOne({
+                where: { account_id: id },
+              });
+              var friend = await this.userRepository.findOne({
+                where: { account_id: unfriend.friend_id },
+              });
+            if(!me) {
+                throw new HttpException(
+                    `User with id ${id} not found.`,
+                    HttpStatus.NOT_FOUND,
+                  );
+            } else if(!friend) {
+                throw new HttpException(
+                    `User with id ${unfriend.friend_id} not found.`,
+                    HttpStatus.NOT_FOUND,
+                  );
+            } else {
+                let result = await this.friendFollowRepository
+                .createQueryBuilder("friend_follow")
+                .where(" (account_id=:id and friend_id = :friendId) or (account_id=:friendId and friend_id = :id)", {id: id, friendId: unfriend.friend_id} )
+                .getOne();
+                if(result) {
+                    if(result.status === 2) {
+                        var info = await this.friendFollowRepository.remove(result)
+                        if(info) {
+                            return "Friend refuse successfully.";
+                        } else {
+                            return "Friend refuse failed.";
+                        }
+                    } else {
+                        throw new HttpException(
+                            `You guys are not friends.`,
+                            HttpStatus.BAD_REQUEST,
+                          );
+                    }
+                } else {
+                    throw new HttpException(
+                        `FriendFollow not found.`,
+                        HttpStatus.NOT_FOUND,
+                      );
+                }
+            }
+        } catch (err) {
+            console.log('error: ', err.message ?? err);
+            throw new HttpException(
+              err.message,
+              err.HttpStatus
+            );
+        }
+    }
+
+    // async listFriendRequest(id: number): Promise<Array<>> {
+    //     try {
+    //         var user = await this.userRepository.findOne({
+    //             where: { account_id: id },
+    //           });
+    //         if(!user) {
+    //             throw new HttpException(
+    //                 `User with id ${id} not found.`,
+    //                 HttpStatus.NOT_FOUND,
+    //               );
+    //         } else {
+    //         }
+    //     } catch (err) {
+    //         console.log('error: ', err.message ?? err);
+    //         throw new HttpException(
+    //           err.message,
+    //           err.HttpStatus
+    //         );
+    //     }
+    // }
 }
