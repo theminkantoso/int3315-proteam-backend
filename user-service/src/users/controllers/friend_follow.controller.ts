@@ -29,7 +29,7 @@ export class FriendFollowController {
   @Patch('friend-request')
   async friendRequest( @Body() friendRequestDto: FriendRequestDto) {
     let id = 1;
-    let request: FriendFollowDto = { account_id: id, friend_id: friendRequestDto.friend_id, status: 3 };
+    let request: FriendFollowDto = { account_id: id, friend_id: friendRequestDto.friend_id, status: 2 };
 
     return instanceToPlain(this.friendFollowService.saveFriendFollow(id, request));
   }

@@ -1,6 +1,6 @@
 import { UserService } from '../services/user.service';
 import { classToPlain, instanceToPlain } from 'class-transformer';
-import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBasicAuth,
@@ -57,13 +57,13 @@ export class UserController {
   @ApiOperation({ summary: 'Get personal profile from other user' })
   @ApiResponse({ status: 200, description: 'User profile' })
   @ApiNotFoundResponse({ status: 404, description: 'User not found' })
-  @Get('/:id')
-  async getUserById(@Query('id') id?: string): Promise<any> {
-    if (await this.userService.areFriend(parseInt('1'), parseInt(id))) {
-      return instanceToPlain(this.userService.getOneById(parseInt(id)));
+  @Get(':id')
+  async getUserById(@Query('id', ParseIntPipe) id?: number): Promise<any> {
+    if (await this.userService.areFriend(parseInt('1'), id)) {
+      return instanceToPlain(this.userService.getOneById(id));
     } 
     else {
-      let profile = await this.userService.getOneById(parseInt(id));
+      let profile = await this.userService.getOneById(id);
       const return_profile: Record<string, any> = {};
       return_profile.name = profile.name? profile.name: '';
       return_profile.school = profile.school ? profile.school : '';
