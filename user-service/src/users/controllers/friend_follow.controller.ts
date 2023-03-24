@@ -1,6 +1,6 @@
+import { AcceptFriendDto } from './../dtos/friend_follow/accept_friend.dto';
 import { FriendFollowDto } from './../dtos/friend_follow/friend_follow.dto';
 import { FriendRequestDto } from './../dtos/friend_follow/friend_request.dto';
-import { FriendFollow } from './../entities/friend_follow.entity';
 import { FriendFollowService } from './../services/friend_follow.service';
 import { classToPlain, instanceToPlain } from 'class-transformer';
 import { Body, Controller, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
@@ -22,16 +22,26 @@ import { randomUUID } from 'crypto';
 export class FriendFollowController {
   constructor(private readonly friendFollowService: FriendFollowService) {}
 
-  @ApiOperation({ summary: 'Accept friend request (jwt required)' })
+  @ApiOperation({ summary: 'Send friend request (jwt required)' })
   @ApiResponse({ status: 200, description: 'Current Friend Follow info' })
   @ApiNotFoundResponse({ status: 404, description: 'User not found' })
+  @ApiBadRequestResponse({ status: 400, description: '' })
   // @UseGuards(JwtAuthGuard)
-  @Patch('friend-request')
+  @Post('friend-request')
   async friendRequest( @Body() friendRequestDto: FriendRequestDto) {
     let id = 1;
-    let request: FriendFollowDto = { account_id: id, friend_id: friendRequestDto.friend_id, status: 3 };
+    return instanceToPlain(this.friendFollowService.saveFriendFollow(id, friendRequestDto));
+  }
 
-    return instanceToPlain(this.friendFollowService.saveFriendFollow(id, request));
+  @ApiOperation({ summary: 'Accept friend request (jwt required)'})
+  @ApiResponse({ status: 200, description: 'Current Friend Follow info' })
+  @ApiNotFoundResponse({ status: 404, description: 'User not found' })
+  @ApiBadRequestResponse({ status: 400, description: '' })
+  // @UseGuards(JwtAuthGuard)
+  @Patch('accept-friend')
+  async acceptFriend( @Body() acceptFriend: AcceptFriendDto) {
+    let id = 3;
+    return instanceToPlain(this.friendFollowService.updateFriendFollow(id, acceptFriend));
   }
 
 }

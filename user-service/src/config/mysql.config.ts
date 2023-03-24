@@ -4,10 +4,10 @@ const port: number = parseInt(<string>process.env.PORT) || 3306;
 
 export const mysqlConnectionConfig: TypeOrmModuleOptions = {
   type: 'mysql',
-  host: 'mysql',
-  port: port,
+  host: '127.0.0.1',
+  port: 3306,
   username: 'root',
-  password: '123456',
+  password: '',
   database: 'proteam',
 //   entities: [ __dirname + 'dist/**/*.entity{.ts,.js}'],
   entities: [ __dirname + 'dist/**/*.entity{.ts,.js}'],
