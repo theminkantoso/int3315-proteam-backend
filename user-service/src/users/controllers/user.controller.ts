@@ -1,6 +1,6 @@
 import { UserService } from '../services/user.service';
 import { classToPlain, instanceToPlain } from 'class-transformer';
-import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBasicAuth,
@@ -35,12 +35,11 @@ export class UserController {
   @ApiResponse({ status: 200, description: 'Current user profile' })
   @ApiNotFoundResponse({ status: 404, description: 'User not found' })
   @ApiBearerAuth()
-  // @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'))
   @Get()
-  async GetMe(): Promise<any> {
-    // const decoded =  this.userService.decodeJwt('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw');
-    //   console.log(decoded.sub);
-    var user = await this.userService.getOneById(parseInt('1'));
+  async GetMe(@Req() req: Request): Promise<any> {
+    const acc_id = typeof(req['user'].id) === 'string' ? parseInt(req['user'].id) : req['user'].id;
+    var user = await this.userService.getOneById(acc_id);
     var user2 = instanceToPlain(user);
     return user2;
   }
@@ -48,20 +47,25 @@ export class UserController {
   @ApiOperation({ summary: 'Update personal profile' })
   @ApiResponse({ status: 200, description: 'Updated profile' })
   @ApiNotFoundResponse({ status: 404, description: 'User not found' })
+  @UseGuards(AuthGuard('jwt'))
   @Patch()
   async update(
-    // @Param('id', ParseIntPipe) id: number,
+    @Req() req: Request,
     @Body() updateDTO: UpdateMeDto,
   ) {
-    return instanceToPlain(this.userService.update(parseInt('1'), updateDTO));
+    const acc_id = typeof(req['user'].id) === 'string' ? parseInt(req['user'].id) : req['user'].id;
+    return instanceToPlain(this.userService.update(acc_id, updateDTO));
   }
 
   @ApiOperation({ summary: 'Get personal profile from other user' })
   @ApiResponse({ status: 200, description: 'User profile' })
   @ApiNotFoundResponse({ status: 404, description: 'User not found' })
+  @UseGuards(AuthGuard('jwt'))
   @Get(':id')
-  async getUserById(@Query('id', ParseIntPipe) id?: number): Promise<any> {
-    if (await this.userService.areFriend(parseInt('1'), id)) {
+  async getUserById(@Req() req: Request, 
+  @Query('id', ParseIntPipe) id?: number): Promise<any> {
+    const acc_id = typeof(req['user'].id) === 'string' ? parseInt(req['user'].id) : req['user'].id;
+    if (await this.userService.areFriend(acc_id, id)) {
       return instanceToPlain(this.userService.getOneById(id));
     } 
     else {
