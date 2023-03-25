@@ -44,6 +44,7 @@ export class AuthController {
   @Post('login')
   @UsePipes(new JoiValidationPipe(LoginSchema))
   async login(@Body(new TrimBodyPipe()) data: LoginDto) {
+    console.log("Hello");
     try {
       const user = await this.authService.getUserByEmail(data.email, [
         ...usersAttributes,

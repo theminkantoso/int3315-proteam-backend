@@ -39,6 +39,7 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'))
   @Get()
   async GetMe(@Req() req: Request): Promise<any> {
+    console.log("CORS");
     const acc_id = typeof(req['user'].id) === 'string' ? parseInt(req['user'].id) : req['user'].id;
     var user = await this.userService.getOneById(acc_id);
     var user2 = instanceToPlain(user);
