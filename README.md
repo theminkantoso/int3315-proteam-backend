@@ -18,7 +18,9 @@ Có 6 service
 ## Swagger
 ```localhost:3000/api```
 
-```USER_SERVICE``` chạy port 3002 với prefix ```localhost:3000/user/api```
+```AUTH_SERVICE``` swagger chạy port 3001, truy cập qua ```localhost:3000/auth/api``` hoặc ```localhost:3001/auth/api```
+
+```USER_SERVICE``` swagger chạy port 3002, truy cập qua ```localhost:3000/user/api``` hoặc ```localhost:3001/user/api```
 
 ## mysql
 Tạo CSDL ```proteam``` trong localhost:3308 ```root-123456```
