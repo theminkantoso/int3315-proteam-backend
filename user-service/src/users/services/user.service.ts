@@ -20,7 +20,7 @@ export class UserService {
   
   constructor(private readonly jwtService: JwtService,
     @InjectRepository(User) private userRepository: Repository<User>,
-    @InjectRepository(FriendFollow) private friendRepository: Repository<FriendFollow>
+    @InjectRepository(FriendFollow) private friendRepository: Repository<FriendFollow>,
     @InjectRepository(SkillAccount) private skillAccountRepository: Repository<SkillAccount>,
     @InjectRepository(Skill) private skillRepository: Repository<Skill>) {}
 
