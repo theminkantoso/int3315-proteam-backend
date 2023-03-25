@@ -14,15 +14,17 @@ import { SkillAccountDto } from '../dtos/skill_account.dto';
 import * as bcrypt from 'bcrypt';
 import { SkillAccount } from '../entities/skill_account.entity';
 
-
 @Injectable()
 export class UserService {
-  
-  constructor(private readonly jwtService: JwtService,
+  constructor(
+    private readonly jwtService: JwtService,
     @InjectRepository(User) private userRepository: Repository<User>,
-    @InjectRepository(FriendFollow) private friendRepository: Repository<FriendFollow>
-    @InjectRepository(SkillAccount) private skillAccountRepository: Repository<SkillAccount>,
-    @InjectRepository(Skill) private skillRepository: Repository<Skill>) {}
+    @InjectRepository(FriendFollow)
+    private friendRepository: Repository<FriendFollow>,
+    @InjectRepository(SkillAccount)
+    private skillAccountRepository: Repository<SkillAccount>,
+    @InjectRepository(Skill) private skillRepository: Repository<Skill>,
+  ) {}
 
   decodeJwt(token_in: string) {
     const decodedJwt = this.jwtService.decode(token_in);
@@ -46,7 +48,6 @@ export class UserService {
   async update(id: number, user: UpdateMeDto): Promise<User> {
     let foundUser = await this.userRepository.findOneOrFail({
       where: { account_id: id },
-
     });
     if (!foundUser) {
       throw new HttpException(
@@ -55,9 +56,9 @@ export class UserService {
       );
     }
 
-    var updated = { ...foundUser, ...user};
+    var updated = { ...foundUser, ...user };
 
-  return await this.userRepository.save(updated);
+    return await this.userRepository.save(updated);
   }
 
   // async update_pass(id: number, user: UpdatePasswordDto): Promise<User> {
@@ -84,115 +85,131 @@ export class UserService {
   //   }
   //   // const new_password = user.new_password;
   //   foundUser.password =  bcrypt.hashSync(user.new_password, bcrypt.genSaltSync(10));
-    
+
   //   // var updated = { ...foundUser, ...new_password};
 
   // return await this.userRepository.save(foundUser);
   // }
 
   async areFriend(userid: number, otherid: number): Promise<boolean> {
-    let result = await this.friendRepository.createQueryBuilder('friend_follow')
-    .where('friend_follow.status = 1')
-    .andWhere('friend_follow.account_id = :userid', {userid: userid})
-    .andWhere('friend_follow.friend_id = :otherid', {otherid: otherid})
-    .getOne();
+    let result = await this.friendRepository
+      .createQueryBuilder('friend_follow')
+      .where('friend_follow.status = 1')
+      .andWhere('friend_follow.account_id = :userid', { userid: userid })
+      .andWhere('friend_follow.friend_id = :otherid', { otherid: otherid })
+      .getOne();
     if (!result) {
       return false;
-    } 
-    else {return true;}
+    } else {
+      return true;
+    }
   }
 
   async getFriendList(userid: number): Promise<any> {
-    return await this.userRepository.createQueryBuilder('account').
-    innerJoin(FriendFollow, 'friend_follow', 'account.account_id = friend_follow.friend_id').
-    where('friend_follow.status = 1').
-    andWhere('friend_follow.account_id = :userid', {userid: userid}).
-    getMany();
+    return await this.userRepository
+      .createQueryBuilder('account')
+      .innerJoin(
+        FriendFollow,
+        'friend_follow',
+        'account.account_id = friend_follow.friend_id',
+      )
+      .where('friend_follow.status = 1')
+      .andWhere('friend_follow.account_id = :userid', { userid: userid })
+      .getMany();
   }
 
   async getFriendRequestList(userid: number): Promise<any> {
-    return await this.userRepository.createQueryBuilder('account').
-    select(['account.name', 'account.school', 'account.major', 'account.avatar']).
-    innerJoin(FriendFollow, 'friend_follow', 'account.account_id = friend_follow.friend_id').
-    where('friend_follow.status = 2').
-    andWhere('friend_follow.account_id = :userid', {userid: userid}).
-    getMany();
+    return await this.userRepository
+      .createQueryBuilder('account')
+      .select([
+        'account.name',
+        'account.school',
+        'account.major',
+        'account.avatar',
+      ])
+      .innerJoin(
+        FriendFollow,
+        'friend_follow',
+        'account.account_id = friend_follow.friend_id',
+      )
+      .where('friend_follow.status = 2')
+      .andWhere('friend_follow.account_id = :userid', { userid: userid })
+      .getMany();
   }
-  
-  async updateSkills(id: number, skills: UpdateSkillsDto ): Promise<String> {
+
+  async updateSkills(id: number, skills: UpdateSkillsDto): Promise<String> {
     try {
-      if(skills.skills.length <= 0) {
+      if (skills.skills.length <= 0) {
         throw new HttpException(
           `Array skills is empty.`,
           HttpStatus.BAD_REQUEST,
         );
       }
-        var user = await this.userRepository.findOne({
-            where: { account_id: id },
-          });
-        if(!user) {
-            throw new HttpException(
-                `User with id ${id} not found.`,
-                HttpStatus.NOT_FOUND,
-              );
-        } else {
-            await this.skillAccountRepository.delete({account_id: id});
-
-            let count = await this.skillRepository
-             .createQueryBuilder("skill")
-             .where("skill_id IN (:list)", { list: skills.skills })
-             .getCount();
-
-            if(count >= 0 && count === skills.skills.length) {
-              for(let i = 0; i < count; i++) {
-                let skillAcc: SkillAccountDto = { skill_id: skills.skills[i], account_id: id};
-                await this.skillAccountRepository.insert(skillAcc);
-              }
-              return "Update user skills successfully."
-            } else {
-              throw new HttpException(
-                `Has skill with id not found.`,
-                HttpStatus.BAD_REQUEST,
-              );
-            }
-        }
-    } catch (err) {
-        console.log('error: ', err.message ?? err);
+      var user = await this.userRepository.findOne({
+        where: { account_id: id },
+      });
+      if (!user) {
         throw new HttpException(
-          err.message,
-          err.HttpStatus
+          `User with id ${id} not found.`,
+          HttpStatus.NOT_FOUND,
         );
+      } else {
+        await this.skillAccountRepository.delete({ account_id: id });
+
+        let count = await this.skillRepository
+          .createQueryBuilder('skill')
+          .where('skill_id IN (:list)', { list: skills.skills })
+          .getCount();
+
+        if (count >= 0 && count === skills.skills.length) {
+          for (let i = 0; i < count; i++) {
+            let skillAcc: SkillAccountDto = {
+              skill_id: skills.skills[i],
+              account_id: id,
+            };
+            await this.skillAccountRepository.insert(skillAcc);
+          }
+          return 'Update user skills successfully.';
+        } else {
+          throw new HttpException(
+            `Has skill with id not found.`,
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+      }
+    } catch (err) {
+      console.log('error: ', err.message ?? err);
+      throw new HttpException(err.message, err.HttpStatus);
     }
   }
 
-  async getSkills(id: number ): Promise<Skill[]> {
+  async getSkills(id: number): Promise<Skill[]> {
     try {
       var user = await this.userRepository.findOne({
         where: { account_id: id },
       });
-      if(!user) {
-          throw new HttpException(
-              `User with id ${id} not found.`,
-              HttpStatus.NOT_FOUND,
-            );
-      } else {
-          let skills = await this.skillRepository
-          .createQueryBuilder("skill")
-          .where("skill_id in (select skill_id from skill_account where account_id=:account_id)", {account_id: id})
-          .getRawMany();
-          if(!skills)  {
-            return [];
-          } else {
-            return skills;
-          }
-        }
-    } catch (err) {
-        console.log('error: ', err.message ?? err);
+      if (!user) {
         throw new HttpException(
-          err.message,
-          err.HttpStatus
+          `User with id ${id} not found.`,
+          HttpStatus.NOT_FOUND,
         );
+      } else {
+        let skills = await this.skillRepository
+          .createQueryBuilder('skill')
+          .where(
+            'skill_id in (select skill_id from skill_account where account_id=:account_id)',
+            { account_id: id },
+          )
+          .getRawMany();
+        if (!skills) {
+          return [];
+        } else {
+          return skills;
+        }
+      }
+    } catch (err) {
+      console.log('error: ', err.message ?? err);
+      throw new HttpException(err.message, err.HttpStatus);
     }
   }
-
 }

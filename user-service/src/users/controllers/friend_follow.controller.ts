@@ -32,7 +32,6 @@
 // } from '@nestjs/swagger';
 // import { randomUUID } from 'crypto';
 
-
 // // @ApiTags('Friend request')
 // // @Controller()
 // // @ApiBearerAuth()
@@ -73,4 +72,4 @@
 //     return instanceToPlain(this.friendFollowService.saveFriendFollow(id, friendRequestDto));
 //   }
 
-}
+// }
