@@ -6,18 +6,6 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.setGlobalPrefix('/user');
-
-  const config = new DocumentBuilder()
-    .setTitle('USER-SERVICE')
-    .setDescription('The USER Service description')
-    .setVersion('1.0')
-    .addTag('USER-SERVICE')
-    .addBearerAuth()
-    .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('/user/api', app, document);
-  app.useGlobalPipes(new ValidationPipe());
   const corsOptions: CorsOptions = {
     origin: ('*' || '').split(','),
     allowedHeaders: [
@@ -30,6 +18,19 @@ async function bootstrap() {
     methods: ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
 };
 app.enableCors(corsOptions);
-  await app.listen(3002);
+  app.setGlobalPrefix('/user');
+
+  const config = new DocumentBuilder()
+    .setTitle('USER-SERVICE')
+    .setDescription('The USER Service description')
+    .setVersion('1.0')
+    .addTag('USER-SERVICE')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('/user/api', app, document);
+  app.useGlobalPipes(new ValidationPipe());
+  
+await app.listen(3002);
 }
 bootstrap();
