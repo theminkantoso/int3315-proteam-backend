@@ -1,11 +1,24 @@
 import { ValidationPipe } from '@nestjs/common';
+import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.setGlobalPrefix('/auth');
+  const corsOptions: CorsOptions = {
+    origin: ('*' || '').split(','),
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'X-Timezone',
+      'X-Timezone-Name',
+    ],
+    optionsSuccessStatus: 200,
+    methods: ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
+  };
+  app.enableCors(corsOptions);
+  app.setGlobalPrefix('/user');
 
   const config = new DocumentBuilder()
     .setTitle('USER-SERVICE')
@@ -17,6 +30,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('/user/api', app, document);
   app.useGlobalPipes(new ValidationPipe());
+
   await app.listen(3002);
 }
 bootstrap();
