@@ -8,15 +8,15 @@ async function bootstrap() {
   app.setGlobalPrefix('/auth');
 
   const config = new DocumentBuilder()
-    .setTitle('USER-SERVICE')
-    .setDescription('The USER Service description')
+    .setTitle('AUTH-SERVICE')
+    .setDescription('The AUTH Service description')
     .setVersion('1.0')
-    .addTag('USER-SERVICE')
+    .addTag('AUTH-SERVICE')
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('/user/api', app, document);
+  SwaggerModule.setup('/auth/api', app, document);
   app.useGlobalPipes(new ValidationPipe());
-  await app.listen(3002);
+  await app.listen(3001);
 }
 bootstrap();
