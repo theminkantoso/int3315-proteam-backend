@@ -139,7 +139,7 @@ export class UserService {
 
   async updateSkills(id: number, skills: UpdateSkillsDto): Promise<String> {
     try {
-      if (skills.skills.length <= 0) {
+      if(skills.skills !== null && skills.skills !== undefined && skills.skills.length <= 0 ) {
         throw new HttpException(
           `Array skills is empty.`,
           HttpStatus.BAD_REQUEST,
