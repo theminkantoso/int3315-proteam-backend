@@ -16,5 +16,6 @@ export class UpdateSkillsDto {
 
     @IsArray()
     @IsNotEmpty()
+    @ApiProperty({default: []})
     skills: number[];
 }

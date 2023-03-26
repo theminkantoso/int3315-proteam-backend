@@ -9,3 +9,4 @@ export * from './friend_follow/accept_friend.dto';
 export * from './friend_follow/unfriend.dto';
 export * from './update_skills.dto';
 export * from './search_user.dto';
+export * from './paging.dto';

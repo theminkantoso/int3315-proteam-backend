@@ -19,23 +19,23 @@ export class SearchService {
 
     async searchUser(search: SearchDto): Promise<User[]>  {
         try {
-
-            let count = await this.userRepository
-             .createQueryBuilder("account");
-             if(search.name !== null && search.name !== undefined && search.name !== '') {
-                count.where("LOWER(name) LIKE '%:name%'", { name: search.name.toLowerCase })
-             } if(search.school !== null && search.name !== undefined && search.school !== '' ) {
-                count.where("LOWER(school) LIKE '%:school%'", { school: search.school.toLowerCase })
-             } if(search.major !== null && search.name !== undefined && search.major !== '' ) {
-                count.where("LOWER(major) LIKE '%:major%'", { major: search.major.toLowerCase })
-             } if(search.min_gpa !== null && search.min_gpa !== undefined && search.min_gpa > 0
-                && search.max_gpa !== null && search.max_gpa !== undefined && search.max_gpa > 0
-                && search.max_gpa > search.min_gpa) {
-                count.where("gpa BETWEEN :min_gpa and :max_gpa", { min_gpa: search.min_gpa, max_gpa: search.max_gpa})
-             } if(search.skills != null && search.skills != undefined && search.skills.length > 0) {
-                count.where("skill_id IN (:list)", { list: search.skills })
+            let users = await this.userRepository
+             .createQueryBuilder('account');
+             if(search.min_gpa !== null && search.min_gpa !== undefined && search.min_gpa >= 0
+                && search.max_gpa !== null && search.max_gpa !== undefined && search.max_gpa >= 0
+                && search.max_gpa >= search.min_gpa) {
+                users.where(" gpa BETWEEN :min_gpa and :max_gpa ");
+                users.setParameters({'min_gpa': search.min_gpa, 'max_gpa': search.max_gpa});
+             } if(search.name !== null && search.name !== undefined && search.name !== '') {
+                users.andWhere("LOWER(name) LIKE :name", { name:`%${search.name}%` })
+             } if(search.school !== null && search.school !== undefined && search.school !== '' ) {
+                users.andWhere("LOWER(school) LIKE :school ", { school:`%${search.school}%` })
+             } if(search.major !== null && search.major !== undefined && search.major !== '' ) {
+                users.andWhere(" LOWER(major) LIKE :major  ", { major:`%${search.major}%` })
+             }  if(search.skills != null && search.skills != undefined && search.skills.length > 0) {
+                users.andWhere(" EXISTS(select skill_id from skill_account where account.account_id=skill_account.account_id and skill_id IN (:list)) ", {list: search.skills})
              }
-             let list = count.getRawMany();
+             let list = users.skip(search.page_number).take(search.limit).getRawMany();
             if(!list) {
                 return [];
             }
