@@ -19,6 +19,7 @@ import { ErrorResponse, SuccessResponse } from 'src/common/helper/response';
 import { JoiValidationPipe } from 'src/common/pipe/joi.validation.pipe';
 import { TrimBodyPipe } from 'src/common/pipe/trim.body.pipe';
 import { DatabaseService } from 'src/common/services/mysql.service';
+import { SaveOptions, RemoveOptions } from 'typeorm';
 import {
   GoogleLoginLinkDto,
   GoogleLoginLinkSchema,
@@ -203,22 +204,25 @@ export class AuthController {
         const message = 'login information is incorrect';
         return new ErrorResponse(HttpStatus.UNAUTHORIZED, message, []);
       }
-      const user = await this.authService.getUserByEmail(userInfoEmail);
-      // check if user exists?
-      // if (!user) {
-      //     const message = 'User not found';
-      //     return new ErrorResponse(HttpStatus.UNAUTHORIZED, message, []);
-      // }
-      // check if user is active?
-      // if (user.status !== UserStatus.ACTIVE) {
-      //     const message = 'the user is not activated yet';
-      //     return new ErrorResponse(HttpStatus.UNAUTHORIZED, message, []);
-      // }
+      const user = {
+        account_id: userInfoEmail.user_id,
+        name: '',
+        email: userInfoEmail.email,
+        password: '',
+        gpa: 0,
+        school: '',
+        major: '',
+        avatar: '',
+        linkedln_link: '',
+        phone: '',
+        role: 0,
+        cv: '',
+      };
       const {
         user: profile,
         accessToken,
         refreshToken,
-      } = await this.authService.login(user);
+      } = await this.authService.login(user as unknown as User);
       return new SuccessResponse({ profile, accessToken, refreshToken });
     } catch (error) {
       throw new InternalServerErrorException(error);

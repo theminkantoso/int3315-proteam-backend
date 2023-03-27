@@ -9,7 +9,7 @@ import { ChangePasswordDto } from '../dto/requests/update-profile.dto';
 import { UserToken } from '../entities/user-token.entity';
 import bcrypt from 'bcrypt';
 import { DatabaseService } from 'src/common/services/mysql.service';
-import { OAuth2Client } from 'google-auth-library';
+import { OAuth2Client, TokenInfo } from 'google-auth-library';
 import { IGoogleLoginLinkQuery } from '../auth.interfaces';
 import { GoogleLoginLinkParameters } from '../auth.constants';
 import { User } from '../entities/user.entity';
@@ -22,6 +22,8 @@ export class AuthService {
     @InjectEntityManager()
     private readonly dbManager: EntityManager,
     @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(UserToken)
+    private userTokenRepository: Repository<UserToken>,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly databaseService: DatabaseService,
@@ -230,8 +232,8 @@ export class AuthService {
       );
       const clientId = this.configService.get(ConfigKey.GOOGLE_CLIENT_ID);
       const googleClient = new OAuth2Client({ clientSecret, clientId });
-      const { email } = await googleClient.getTokenInfo(accessToken);
-      return email;
+      const infoUser: TokenInfo = await googleClient.getTokenInfo(accessToken);
+      return infoUser;
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

@@ -12,13 +12,13 @@ import { User } from './user.entity';
 @Entity({ name: 'user_tokens' })
 export class UserToken extends BaseEntity {
   @PrimaryGeneratedColumn()
-  account_id: number;
+  id: number;
 
   @Column()
-  userId: number;
+  accountId: number;
 
   @ManyToOne(() => User)
-  @JoinColumn({ name: 'userId' })
+  @JoinColumn({ name: 'accountId' })
   user?: User;
 
   // hash token value to find faster
