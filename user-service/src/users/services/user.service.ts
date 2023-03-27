@@ -94,9 +94,10 @@ export class UserService {
   async areFriend(userid: number, otherid: number): Promise<boolean> {
     let result = await this.friendRepository
       .createQueryBuilder('friend_follow')
-      .where('friend_follow.status = 1')
-      .andWhere('friend_follow.account_id = :userid', { userid: userid })
-      .andWhere('friend_follow.friend_id = :otherid', { otherid: otherid })
+      .where('friend_follow.status = 1 AND friend_follow.account_id = :userid AND friend_follow.friend_id = :otherid', {userid: userid,  otherid: otherid})
+      // .andWhere('friend_follow.account_id = :userid', { userid: userid })
+      // .andWhere('friend_follow.friend_id = :otherid', { otherid: otherid })
+      .orWhere('friend_follow.status = 1 AND friend_follow.account_id = :otherid AND friend_follow.friend_id = :userid', {userid: userid,  otherid: otherid})
       .getOne();
     if (!result) {
       return false;
@@ -106,16 +107,40 @@ export class UserService {
   }
 
   async getFriendList(userid: number): Promise<any> {
-    return await this.userRepository
-      .createQueryBuilder('account')
-      .innerJoin(
-        FriendFollow,
-        'friend_follow',
-        'account.account_id = friend_follow.friend_id',
-      )
-      .where('friend_follow.status = 1')
-      .andWhere('friend_follow.account_id = :userid', { userid: userid })
-      .getMany();
+    const result1 = await this.userRepository
+    .createQueryBuilder('account')
+    .innerJoin(
+      FriendFollow,
+      'friend_follow',
+      'account.account_id = friend_follow.friend_id',
+    )
+    .where('friend_follow.status = 1')
+    .andWhere('friend_follow.account_id = :userid', { userid: userid })
+    .getMany();
+
+    const result2 = await this.userRepository
+    .createQueryBuilder('account')
+    .innerJoin(
+      FriendFollow,
+      'friend_follow',
+      'account.account_id = friend_follow.account_id',
+    )
+    .where('friend_follow.status = 1')
+    .andWhere('friend_follow.friend_id = :userid', { userid: userid })
+    .getMany();
+
+    return result1.concat(result2);
+
+    // return await this.userRepository
+    //   .createQueryBuilder('account')
+    //   .innerJoin(
+    //     FriendFollow,
+    //     'friend_follow',
+    //     'account.account_id = friend_follow.friend_id',
+    //   )
+    //   .where('friend_follow.status = 1')
+    //   .andWhere('friend_follow.account_id = :userid', { userid: userid })
+    //   .getMany();
   }
 
   async getFriendRequestList(userid: number): Promise<any> {
