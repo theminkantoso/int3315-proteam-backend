@@ -13,6 +13,7 @@ import { JwtGuard } from 'src/common/guards/jwt.guard';
 import { DatabaseService } from 'src/common/services/mysql.service';
 import { AuthController } from './auth.controller';
 import { RefreshTokenMiddleware } from './auth.middleware';
+import { UserToken } from './entities/user-token.entity';
 import { User } from './entities/user.entity';
 import { AuthService } from './services/auth.service';
 
@@ -28,7 +29,7 @@ import { AuthService } from './services/auth.service';
         },
       }),
     }),
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, UserToken]),
   ],
   providers: [AuthService, JwtGuard, DatabaseService],
   controllers: [AuthController],
