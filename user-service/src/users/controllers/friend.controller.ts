@@ -60,7 +60,7 @@ export class FriendController {
     return instanceToPlain(this.friendFollowService.saveFriendFollow(acc_id, friendRequestDto));
   }
 
-  @ApiOperation({ summary: 'Accept friend request (jwt required)'})
+  @ApiOperation({ summary: 'Accept friend request (jwt required), status: 2- accept, 1- refuse'})
   @ApiResponse({ status: 200, description: 'Current Friend Follow info' })
   @ApiNotFoundResponse({ status: 404, description: 'User not found' })
   @ApiBadRequestResponse({ status: 400, description: '' })
