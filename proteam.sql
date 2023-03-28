@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th3 28, 2023 lúc 02:47 PM
+-- Thời gian đã tạo: Th3 28, 2023 lúc 04:43 PM
 -- Phiên bản máy phục vụ: 10.4.17-MariaDB
 -- Phiên bản PHP: 7.4.15
 
@@ -20,6 +20,8 @@ SET time_zone = "+00:00";
 --
 -- Cơ sở dữ liệu: `proteam`
 --
+CREATE DATABASE IF NOT EXISTS `proteam` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `proteam`;
 
 -- --------------------------------------------------------
 
