@@ -9,7 +9,8 @@ import {
   Req,
   Request,
   UseGuards,
-  UsePipes,
+  UsePipes, 
+  HttpException,
 } from '@nestjs/common';
 import { HttpStatus } from 'src/common/constants';
 
@@ -45,7 +46,6 @@ export class AuthController {
   @Post('login')
   @UsePipes(new JoiValidationPipe(LoginSchema))
   async login(@Body(new TrimBodyPipe()) data: LoginDto) {
-    console.log("Hello");
     try {
       const user = await this.authService.getUserByEmail(data.email, [
         ...usersAttributes,
@@ -79,13 +79,15 @@ export class AuthController {
         accessToken,
         refreshToken,
       } = await this.authService.login(user);
+      // console.log(information, '\n', accessToken, '\n',refreshToken);
       return new SuccessResponse({
         information,
         accessToken,
         refreshToken,
       });
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      // throw new InternalServerErrorException(error);
+      new HttpException("message", 400, { cause: new Error("Some Error") })
     }
   }
 
