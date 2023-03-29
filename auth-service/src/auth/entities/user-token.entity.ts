@@ -15,15 +15,11 @@ export class UserToken extends BaseEntity {
   id: number;
 
   @Column()
-  accountId: number;
-
-  @ManyToOne(() => User)
-  @JoinColumn({ name: 'accountId' })
-  user?: User;
+  account_id: number;
 
   // hash token value to find faster
   @Column({ length: 2000 })
-  hashToken: string;
+  hash_token: string;
 
   @Column({ type: 'blob' })
   token: string;

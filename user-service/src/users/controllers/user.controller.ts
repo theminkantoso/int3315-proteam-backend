@@ -39,7 +39,7 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'))
   @Get()
   async GetMe(@Req() req: Request): Promise<any> {
-    console.log("CORS");
+    // console.log("CORS");
     const acc_id = typeof(req['user'].id) === 'string' ? parseInt(req['user'].id) : req['user'].id;
     var user = await this.userService.getOneById(acc_id);
     var user2 = instanceToPlain(user);
@@ -73,6 +73,7 @@ export class UserController {
     else {
       let profile = await this.userService.getOneById(id);
       const return_profile: Record<string, any> = {};
+      return_profile.account_id = profile.account_id;
       return_profile.name = profile.name? profile.name: '';
       return_profile.school = profile.school ? profile.school : '';
       return_profile.major = profile.major? profile.major : '';

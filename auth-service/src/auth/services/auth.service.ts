@@ -104,11 +104,17 @@ export class AuthService {
 
       await this.dbManager.transaction(async (transactionManager) => {
         // add refresh token to user_tokens table.
-        await transactionManager.save(UserToken, {
+        await this.userTokenRepository.save({
           user,
           token: refreshToken.token,
           hashToken,
         });
+      });
+
+      console.log({
+        user,
+        accessToken,
+        refreshToken,
       });
 
       return {
@@ -124,7 +130,7 @@ export class AuthService {
   public async logout(user: User): Promise<boolean> {
     try {
       // delete old refresh token
-      await this.dbManager.delete(UserToken, { user });
+      await this.userTokenRepository.delete({ account_id: user.account_id });
       return true;
     } catch (error) {
       throw error;

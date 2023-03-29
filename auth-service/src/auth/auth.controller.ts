@@ -9,7 +9,7 @@ import {
   Req,
   Request,
   UseGuards,
-  UsePipes, 
+  UsePipes,
   HttpException,
 } from '@nestjs/common';
 import { HttpStatus } from 'src/common/constants';
@@ -87,7 +87,7 @@ export class AuthController {
       });
     } catch (error) {
       // throw new InternalServerErrorException(error);
-      new HttpException("message", 400, { cause: new Error("Some Error") })
+      new HttpException('message', 400, { cause: new Error('Some Error') });
     }
   }
 
