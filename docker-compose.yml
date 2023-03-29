@@ -16,6 +16,8 @@ services:
             - mysql
         ports:
             - 3001:3001
+        env_file:
+          - ./auth-service/.env
 
     user_service:
         build: ./user-service

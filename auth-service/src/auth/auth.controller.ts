@@ -51,7 +51,6 @@ export class AuthController {
         ...usersAttributes,
         'password',
       ]);
-
       if (!user) {
         const message = 'login unsuccessful';
         return new ErrorResponse(
@@ -72,7 +71,7 @@ export class AuthController {
           );
         }
       }
-
+      
       // every thing ok, return success data
       const {
         user: information,
@@ -87,7 +86,7 @@ export class AuthController {
       });
     } catch (error) {
       // throw new InternalServerErrorException(error);
-      new HttpException('message', 400, { cause: new Error('Some Error') });
+      new HttpException('message', 400, { cause: new Error(error) });
     }
   }
 

@@ -14,7 +14,7 @@ import { IGoogleLoginLinkQuery } from '../auth.interfaces';
 import { GoogleLoginLinkParameters } from '../auth.constants';
 import { User } from '../entities/user.entity';
 
-export const usersAttributes: (keyof User)[] = ['email', 'role'];
+export const usersAttributes: (keyof User)[] = ['email', 'role', 'account_id'];
 
 @Injectable()
 export class AuthService {
@@ -97,9 +97,14 @@ export class AuthService {
   }
 
   public async login(user: User) {
+  // public login(user: User) {
     try {
       const accessToken = this.generateAccessToken(user);
+      console.log("AVSSS");
+      console.log(accessToken);
+      console.log("async", user);
       const hashToken = generateHashToken(user.account_id);
+      console.log(hashToken);
       const refreshToken = this.generateRefreshToken(user, hashToken);
 
       await this.dbManager.transaction(async (transactionManager) => {
@@ -111,11 +116,8 @@ export class AuthService {
         });
       });
 
-      console.log({
-        user,
-        accessToken,
-        refreshToken,
-      });
+      console.log("222", accessToken);
+      console.log("222", user.email);
 
       return {
         user,
@@ -123,6 +125,7 @@ export class AuthService {
         refreshToken,
       };
     } catch (error) {
+      console.log("Hi", error);
       throw error;
     }
   }
