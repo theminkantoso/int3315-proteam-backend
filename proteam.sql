@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th3 28, 2023 lúc 04:43 PM
+-- Thời gian đã tạo: Th3 29, 2023 lúc 05:45 PM
 -- Phiên bản máy phục vụ: 10.4.17-MariaDB
 -- Phiên bản PHP: 7.4.15
 
@@ -29,6 +29,7 @@ USE `proteam`;
 -- Cấu trúc bảng cho bảng `account`
 --
 
+DROP TABLE IF EXISTS `account`;
 CREATE TABLE `account` (
   `account_id` int(11) NOT NULL,
   `name` varchar(100) DEFAULT NULL,
@@ -1700,6 +1701,7 @@ INSERT INTO `account` (`account_id`, `name`, `email`, `password`, `gpa`, `school
 -- Cấu trúc bảng cho bảng `conversation`
 --
 
+DROP TABLE IF EXISTS `conversation`;
 CREATE TABLE `conversation` (
   `conversation_id` int(11) NOT NULL,
   `conversation_name` varchar(100) DEFAULT NULL,
@@ -1712,6 +1714,7 @@ CREATE TABLE `conversation` (
 -- Cấu trúc bảng cho bảng `conversation_account`
 --
 
+DROP TABLE IF EXISTS `conversation_account`;
 CREATE TABLE `conversation_account` (
   `id` int(11) NOT NULL,
   `account_id` int(11) NOT NULL,
@@ -1724,6 +1727,7 @@ CREATE TABLE `conversation_account` (
 -- Cấu trúc bảng cho bảng `friend_follow`
 --
 
+DROP TABLE IF EXISTS `friend_follow`;
 CREATE TABLE `friend_follow` (
   `id` int(11) NOT NULL,
   `account_id` int(11) NOT NULL,
@@ -1746,6 +1750,7 @@ INSERT INTO `friend_follow` (`id`, `account_id`, `friend_id`, `status`) VALUES
 -- Cấu trúc bảng cho bảng `message`
 --
 
+DROP TABLE IF EXISTS `message`;
 CREATE TABLE `message` (
   `message_id` int(11) NOT NULL,
   `content` varchar(255) DEFAULT NULL,
@@ -1761,6 +1766,7 @@ CREATE TABLE `message` (
 -- Cấu trúc bảng cho bảng `notification`
 --
 
+DROP TABLE IF EXISTS `notification`;
 CREATE TABLE `notification` (
   `noti_id` int(11) NOT NULL,
   `account_id` int(11) NOT NULL,
@@ -1775,6 +1781,7 @@ CREATE TABLE `notification` (
 -- Cấu trúc bảng cho bảng `post`
 --
 
+DROP TABLE IF EXISTS `post`;
 CREATE TABLE `post` (
   `post_id` int(11) NOT NULL,
   `account_id` int(11) NOT NULL,
@@ -1790,10 +1797,39 @@ CREATE TABLE `post` (
 -- Cấu trúc bảng cho bảng `skill`
 --
 
+DROP TABLE IF EXISTS `skill`;
 CREATE TABLE `skill` (
   `skill_id` int(11) NOT NULL,
   `skill_name` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Đang đổ dữ liệu cho bảng `skill`
+--
+
+INSERT INTO `skill` (`skill_id`, `skill_name`) VALUES
+(1, 'Thuyết trình'),
+(2, 'Tiếng Anh'),
+(3, 'Lập kế hoạch'),
+(4, 'Quản lý'),
+(5, 'Kinh doanh'),
+(6, 'Giao tiếp'),
+(7, 'Đàm phán'),
+(8, 'Kiểm thử'),
+(9, 'Tranh biện'),
+(10, 'Tin học'),
+(11, 'Tổ chức'),
+(12, 'Nghiên cứu và tổng hợp thông tin'),
+(13, 'Xử lý vấn đề'),
+(14, 'Làm việc nhóm'),
+(15, 'Frontend'),
+(16, 'Backend'),
+(17, 'Lập trình AI'),
+(18, 'Big data'),
+(19, 'Mạng máy tính'),
+(20, 'An ninh mạng'),
+(21, 'Kỹ thuật ô tô, nông nghiệp, may mặc,..'),
+(22, 'Tự động hoá');
 
 -- --------------------------------------------------------
 
@@ -1801,6 +1837,7 @@ CREATE TABLE `skill` (
 -- Cấu trúc bảng cho bảng `skill_account`
 --
 
+DROP TABLE IF EXISTS `skill_account`;
 CREATE TABLE `skill_account` (
   `id` int(11) NOT NULL,
   `account_id` int(11) NOT NULL,
@@ -1813,6 +1850,7 @@ CREATE TABLE `skill_account` (
 -- Cấu trúc bảng cho bảng `skill_post`
 --
 
+DROP TABLE IF EXISTS `skill_post`;
 CREATE TABLE `skill_post` (
   `id` int(11) NOT NULL,
   `skill_id` int(11) NOT NULL,
@@ -1825,6 +1863,7 @@ CREATE TABLE `skill_post` (
 -- Cấu trúc bảng cho bảng `user_tokens`
 --
 
+DROP TABLE IF EXISTS `user_tokens`;
 CREATE TABLE `user_tokens` (
   `id` int(255) NOT NULL,
   `account_id` int(255) DEFAULT NULL,
@@ -1955,7 +1994,7 @@ ALTER TABLE `post`
 -- AUTO_INCREMENT cho bảng `skill`
 --
 ALTER TABLE `skill`
-  MODIFY `skill_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `skill_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT cho bảng `skill_account`
