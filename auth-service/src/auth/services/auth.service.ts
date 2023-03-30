@@ -276,7 +276,6 @@ export class AuthService {
       const clientId = this.configService.get(ConfigKey.GOOGLE_CLIENT_ID);
       const googleClient = new OAuth2Client({ clientSecret, clientId });
 
-      console.log(idToken);
       const infoUser = await googleClient.verifyIdToken({ idToken });
       return infoUser;
     } catch (error) {
