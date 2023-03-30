@@ -10,16 +10,16 @@ async function bootstrap() {
   // app.setGlobalPrefix(globalPrefix);
   const port = process.env.PORT || 3000;
 
-  const AUTH_SERVICE_URL = 'http://auth_service:3001';
-  const USER_SERVICE_URL = 'http://user_service:3002';
-  const POST_SERVICE_URL = 'http://post_service:3003';
-  const CHAT_SERVICE_URL = 'http://chat_service:3004';
+  // const AUTH_SERVICE_URL = 'http://auth_service:3001';
+  // const USER_SERVICE_URL = 'http://user_service:3002';
+  // const POST_SERVICE_URL = 'http://post_service:3003';
+  // const CHAT_SERVICE_URL = 'http://chat_service:3004';
 
   // for localhost
-  // const AUTH_SERVICE_URL = 'http://localhost:3001';
-  // const USER_SERVICE_URL = 'http://localhost:3002';
-  // const POST_SERVICE_URL = 'http://localhost:3003';
-  // const CHAT_SERVICE_URL = 'http://localhost:3004';
+  const AUTH_SERVICE_URL = 'http://localhost:3001';
+  const USER_SERVICE_URL = 'http://localhost:3002';
+  const POST_SERVICE_URL = 'http://localhost:3003';
+  const CHAT_SERVICE_URL = 'http://localhost:3004';
 
   // Proxy endpoints
   app.use(

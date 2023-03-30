@@ -20,6 +20,7 @@ import { ErrorResponse, SuccessResponse } from 'src/common/helper/response';
 import { JoiValidationPipe } from 'src/common/pipe/joi.validation.pipe';
 import { TrimBodyPipe } from 'src/common/pipe/trim.body.pipe';
 import { DatabaseService } from 'src/common/services/mysql.service';
+import { ICreateUserBody } from './auth.interfaces';
 import {
   GoogleLoginLinkDto,
   GoogleLoginLinkSchema,
@@ -143,9 +144,6 @@ export class AuthController {
 
   @Post('refresh-token')
   @UseGuards(JwtGuard)
-  // @Permissions([
-  //     `${PermissionResources.AUTHENTICATE}_${PermissionActions.LOGIN}`,
-  // ])
   async refreshToken(@Req() req) {
     try {
       const loginUser = req.loginUser;
@@ -188,41 +186,62 @@ export class AuthController {
     try {
       const { code = null, redirectUri = null } = data;
       const decodedCode = decodeURIComponent(code);
-      const googleAccessToken = await this.authService.getAccessTokenFromCode(
+      const googleIdToken = await this.authService.getIdTokenFromCode(
         decodedCode,
         redirectUri,
       );
-      if (!googleAccessToken) {
+      if (!googleIdToken) {
         const message = 'login information is incorrect';
         return new ErrorResponse(HttpStatus.UNAUTHORIZED, message, []);
       }
-      const userInfoEmail = await this.authService.getUserInfoFromAccessToken(
-        googleAccessToken,
+      const userInfoData = await this.authService.getUserInfoFromIdToken(
+        googleIdToken,
       );
-      if (!userInfoEmail) {
+
+      if (!userInfoData) {
         const message = 'login information is incorrect';
         return new ErrorResponse(HttpStatus.UNAUTHORIZED, message, []);
       }
-      const user = {
-        account_id: userInfoEmail.user_id,
-        name: '',
-        email: userInfoEmail.email,
-        password: '',
-        gpa: 0,
-        school: '',
-        major: '',
-        avatar: '',
-        linkedln_link: '',
-        phone: '',
-        role: 0,
-        cv: '',
-      };
+
+      const userInfo = userInfoData.getPayload();
+
+      let user: User;
+
+      const checkUserExist = await this.authService.getUserByEmail(
+        userInfo.email,
+        [...usersAttributes, 'password'],
+      );
+
+      if (checkUserExist) {
+        user = checkUserExist;
+      } else {
+        const newUser: ICreateUserBody = {
+          name: userInfo.name,
+          email: userInfo.email,
+          password: '',
+          gpa: 0,
+          school: '',
+          major: '',
+          avatar: '',
+          linkedln_link: '',
+          phone: '',
+          role: 0,
+          cv: '',
+        };
+        user = await this.authService.saveGoogleUser(newUser);
+      }
+
       const {
-        user: profile,
+        user: information,
         accessToken,
         refreshToken,
-      } = await this.authService.login(user as unknown as User);
-      return new SuccessResponse({ profile, accessToken, refreshToken });
+      } = await this.authService.login(user);
+
+      return new SuccessResponse({
+        information,
+        accessToken,
+        refreshToken,
+      });
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
