@@ -1,13 +1,5 @@
-import {
-  Entity,
-  Column,
-  ManyToOne,
-  JoinColumn,
-  PrimaryGeneratedColumn,
-  BaseEntity,
-} from 'typeorm';
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { UserTokenType } from '../auth.constants';
-import { User } from './user.entity';
 
 @Entity({ name: 'user_tokens' })
 export class UserToken extends BaseEntity {

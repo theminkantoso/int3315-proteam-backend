@@ -23,10 +23,16 @@ export class JwtGuard implements CanActivate {
       throw new UnauthorizedException();
     }
 
-    request.loginUser = await this.validateToken(
+    const loginUser = await this.validateToken(
       token,
       request.authorizationType === AUTHORIZATION_TYPE,
     );
+
+    request.loginUser = {
+      ...loginUser,
+      account_id: loginUser?.id,
+    };
+
     return true;
   }
 
