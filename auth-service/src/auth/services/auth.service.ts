@@ -2,19 +2,29 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
+import bcrypt from 'bcrypt';
+import { OAuth2Client, TokenInfo } from 'google-auth-library';
 import ConfigKey from 'src/common/config/config-key';
 import { generateHashToken } from 'src/common/helper/commonFunction';
+import { DatabaseService } from 'src/common/services/mysql.service';
 import { EntityManager, Repository } from 'typeorm';
+import { GoogleLoginLinkParameters, UserTokenType } from '../auth.constants';
+import { IGoogleLoginLinkQuery } from '../auth.interfaces';
 import { ChangePasswordDto } from '../dto/requests/update-profile.dto';
 import { UserToken } from '../entities/user-token.entity';
-import bcrypt from 'bcrypt';
-import { DatabaseService } from 'src/common/services/mysql.service';
-import { OAuth2Client, TokenInfo } from 'google-auth-library';
-import { IGoogleLoginLinkQuery } from '../auth.interfaces';
-import { GoogleLoginLinkParameters } from '../auth.constants';
 import { User } from '../entities/user.entity';
 
-export const usersAttributes: (keyof User)[] = ['email', 'role', 'account_id'];
+export const usersAttributes: (keyof User)[] = [
+  'email',
+  'role',
+  'account_id',
+  'name',
+  'gpa',
+  'school',
+  'major',
+  'linkedln_link',
+  'phone',
+];
 
 @Injectable()
 export class AuthService {
@@ -97,27 +107,19 @@ export class AuthService {
   }
 
   public async login(user: User) {
-  // public login(user: User) {
     try {
       const accessToken = this.generateAccessToken(user);
-      console.log("AVSSS");
-      console.log(accessToken);
-      console.log("async", user);
       const hashToken = generateHashToken(user.account_id);
-      console.log(hashToken);
       const refreshToken = this.generateRefreshToken(user, hashToken);
-
       await this.dbManager.transaction(async (transactionManager) => {
         // add refresh token to user_tokens table.
         await this.userTokenRepository.save({
-          user,
+          account_id: user.account_id,
           token: refreshToken.token,
-          hashToken,
+          hash_token: hashToken,
+          type: UserTokenType.REFRESH_TOKEN,
         });
       });
-
-      console.log("222", accessToken);
-      console.log("222", user.email);
 
       return {
         user,
@@ -125,7 +127,6 @@ export class AuthService {
         refreshToken,
       };
     } catch (error) {
-      console.log("Hi", error);
       throw error;
     }
   }

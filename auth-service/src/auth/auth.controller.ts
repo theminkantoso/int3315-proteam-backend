@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpException,
   InternalServerErrorException,
   Patch,
   Post,
@@ -10,7 +11,6 @@ import {
   Request,
   UseGuards,
   UsePipes,
-  HttpException,
 } from '@nestjs/common';
 import { HttpStatus } from 'src/common/constants';
 
@@ -20,7 +20,6 @@ import { ErrorResponse, SuccessResponse } from 'src/common/helper/response';
 import { JoiValidationPipe } from 'src/common/pipe/joi.validation.pipe';
 import { TrimBodyPipe } from 'src/common/pipe/trim.body.pipe';
 import { DatabaseService } from 'src/common/services/mysql.service';
-import { SaveOptions, RemoveOptions } from 'typeorm';
 import {
   GoogleLoginLinkDto,
   GoogleLoginLinkSchema,
@@ -71,14 +70,13 @@ export class AuthController {
           );
         }
       }
-      
+
       // every thing ok, return success data
       const {
         user: information,
         accessToken,
         refreshToken,
       } = await this.authService.login(user);
-      // console.log(information, '\n', accessToken, '\n',refreshToken);
       return new SuccessResponse({
         information,
         accessToken,
