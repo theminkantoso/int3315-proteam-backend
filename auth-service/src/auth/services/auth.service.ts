@@ -4,12 +4,13 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import bcrypt from 'bcrypt';
 import { OAuth2Client, TokenInfo } from 'google-auth-library';
+import { GetTokenResponse } from 'google-auth-library/build/src/auth/oauth2client';
 import ConfigKey from 'src/common/config/config-key';
 import { generateHashToken } from 'src/common/helper/commonFunction';
 import { DatabaseService } from 'src/common/services/mysql.service';
 import { EntityManager, Repository } from 'typeorm';
 import { GoogleLoginLinkParameters, UserTokenType } from '../auth.constants';
-import { IGoogleLoginLinkQuery } from '../auth.interfaces';
+import { ICreateUserBody, IGoogleLoginLinkQuery } from '../auth.interfaces';
 import { ChangePasswordDto } from '../dto/requests/update-profile.dto';
 import { UserToken } from '../entities/user-token.entity';
 import { User } from '../entities/user.entity';
@@ -235,6 +236,24 @@ export class AuthService {
     }
   }
 
+  public async getIdTokenFromCode(decodedCode: string, redirectUri: string) {
+    try {
+      const clientSecret = this.configService.get(
+        ConfigKey.GOOGLE_CLIENT_SECRET,
+      );
+      const clientId = this.configService.get(ConfigKey.GOOGLE_CLIENT_ID);
+      const googleClient = new OAuth2Client({ clientSecret, clientId });
+      const result: GetTokenResponse = await googleClient.getToken({
+        code: decodedCode,
+        redirect_uri: redirectUri,
+      });
+
+      return result?.tokens?.id_token || '';
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
   public async getUserInfoFromAccessToken(accessToken: string) {
     try {
       const clientSecret = this.configService.get(
@@ -243,6 +262,21 @@ export class AuthService {
       const clientId = this.configService.get(ConfigKey.GOOGLE_CLIENT_ID);
       const googleClient = new OAuth2Client({ clientSecret, clientId });
       const infoUser: TokenInfo = await googleClient.getTokenInfo(accessToken);
+      return infoUser;
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  public async getUserInfoFromIdToken(idToken: string) {
+    try {
+      const clientSecret = this.configService.get(
+        ConfigKey.GOOGLE_CLIENT_SECRET,
+      );
+      const clientId = this.configService.get(ConfigKey.GOOGLE_CLIENT_ID);
+      const googleClient = new OAuth2Client({ clientSecret, clientId });
+
+      const infoUser = await googleClient.verifyIdToken({ idToken });
       return infoUser;
     } catch (error) {
       throw new InternalServerErrorException(error);
@@ -271,6 +305,15 @@ export class AuthService {
         prompt,
       });
       return googleLoginUrl;
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  public async saveGoogleUser(userData: ICreateUserBody) {
+    try {
+      const newUser = this.userRepository.save(userData);
+      return newUser;
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
