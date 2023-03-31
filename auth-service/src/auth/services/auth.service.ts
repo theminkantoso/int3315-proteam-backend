@@ -128,6 +128,7 @@ export class AuthService {
         refreshToken,
       };
     } catch (error) {
+      // console.log(error);
       throw error;
     }
   }
