@@ -1865,12 +1865,31 @@ CREATE TABLE `skill_post` (
 
 DROP TABLE IF EXISTS `user_tokens`;
 CREATE TABLE `user_tokens` (
-  `id` int(255) NOT NULL,
+  `id` int(11) NOT NULL,
   `account_id` int(255) DEFAULT NULL,
   `hash_token` varchar(255) DEFAULT NULL,
   `token` blob DEFAULT NULL,
   `type` enum('1','','','') DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `files`
+--
+
+DROP TABLE IF EXISTS `files`;
+CREATE TABLE `files` (
+  `id` int(11) NOT NULL,
+  `file_name` varchar(255) NOT NULL,
+  `original_name` varchar(255) NOT NULL,
+  `path` varchar(255) NOT NULL,
+  `extension` varchar(255) NOT NULL,
+  `mimetype` varchar(255) NOT NULL,
+  `size` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 
 --
 -- Chỉ mục cho các bảng đã đổ
@@ -1945,6 +1964,12 @@ ALTER TABLE `user_tokens`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Chỉ mục cho bảng `files`
+--
+ALTER TABLE `files`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- AUTO_INCREMENT cho các bảng đã đổ
 --
 
@@ -2012,8 +2037,16 @@ ALTER TABLE `skill_post`
 -- AUTO_INCREMENT cho bảng `user_tokens`
 --
 ALTER TABLE `user_tokens`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
+
+--
+-- AUTO_INCREMENT cho bảng `files`
+--
+ALTER TABLE `files`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+COMMIT;
+
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
