@@ -147,6 +147,7 @@ export class UserService {
     return await this.userRepository
       .createQueryBuilder('account')
       .select([
+        'account.account_id',
         'account.name',
         'account.school',
         'account.major',
@@ -155,10 +156,10 @@ export class UserService {
       .innerJoin(
         FriendFollow,
         'friend_follow',
-        'account.account_id = friend_follow.friend_id',
+        'account.account_id = friend_follow.account_id',
       )
       .where('friend_follow.status = 2')
-      .andWhere('friend_follow.account_id = :userid', { userid: userid })
+      .andWhere('friend_follow.friend_id = :userid', { userid: userid })
       .getMany();
   }
 
