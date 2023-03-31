@@ -52,19 +52,19 @@ export class FriendFollowService {
                 .where("account_id = :accountId and friend_id = :friendId", {accountId: id, friendId: friendRequestDto.friend_id} )
                 .getOne();
                 if(result) {
-                    if(result.status === 2) {
+                    if(result.status === 1) {
                         throw new HttpException(
                             `This person was you friend.`,
                             HttpStatus.BAD_REQUEST,
                           );
-                    } else if(result.status === 3) {
+                    } else if(result.status === 2) {
                         throw new HttpException(
                             `You were sent friend request.`,
                             HttpStatus.BAD_REQUEST,
                           );
                     }
                 } else {
-                    let friendRequest: FriendFollowDto = { account_id: id, friend_id: friendRequestDto.friend_id, status: 3 };
+                    let friendRequest: FriendFollowDto = { account_id: id, friend_id: friendRequestDto.friend_id, status: 2 };
                     let info = await this.friendFollowRepository.insert(friendRequest)
                     if(info) {
                         return "Friend request sent successfully.";
@@ -103,22 +103,28 @@ export class FriendFollowService {
                 .createQueryBuilder("friend_follow")
                 .where("id=:id and friend_id = :friendId", {id: accept.id, friendId: id} )
                 .getOne();
-                if(result) {
-                    if(result.status === 2) {
+
+                let result2 = await this.friendFollowRepository
+                .createQueryBuilder("friend_follow")
+                .where("id=:friendId and friend_id = :id", {id: accept.id, friendId: id} )
+                .getOne();
+                if(result || result2) {
+                    let final_result = result ? result : result2; 
+                    if(final_result.status === 1) {
                         throw new HttpException(
                             `This person was you friend.`,
                             HttpStatus.BAD_REQUEST,
                           );
-                    } else if(result.status === 3 && accept.status === 2) {
+                    } else if(final_result.status === 2 && accept.status === 1) {
                         // accept
-                        var updated = { ...result, ...accept};
+                        var updated = { ...final_result, ...accept};
                         let info = await this.friendFollowRepository.save(updated)
                         if(info) {
                             return "Friend accept successfully.";
                         } else {
                             return "Friend accept failed.";
                         }
-                    } else if(result.status === 3 && accept.status === 1) {
+                    } else if(final_result.status === 2 && accept.status === 2) {
                         // refuse
                         var info = await this.friendFollowRepository.remove(result)
                         if(info) {
@@ -164,10 +170,11 @@ export class FriendFollowService {
             } else {
                 let result = await this.friendFollowRepository
                 .createQueryBuilder("friend_follow")
-                .where(" (account_id=:id and friend_id = :friendId) or (account_id=:friendId and friend_id = :id)", {id: id, friendId: unfriend.friend_id} )
+                .where(" (account_id=:id and friend_id = :friendId) OR (account_id=:friendId and friend_id = :id)", {id: id, friendId: unfriend.friend_id} )
                 .getOne();
+                
                 if(result) {
-                    if(result.status === 2) {
+                    if(result.status === 1) {
                         var info = await this.friendFollowRepository.remove(result)
                         if(info) {
                             return "Friend refuse successfully.";

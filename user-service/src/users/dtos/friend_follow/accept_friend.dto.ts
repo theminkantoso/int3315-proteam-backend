@@ -15,6 +15,6 @@ export class AcceptFriendDto {
 
     @IsNumber()
     @IsNotEmpty()
-    @ApiProperty({default: 2, description: '2: accept, 1: refuse'})
+    @ApiProperty({default: 1, description: '1: accept, 2: refuse'})
     status: number;
 }
