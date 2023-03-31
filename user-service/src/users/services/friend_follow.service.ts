@@ -98,35 +98,44 @@ export class FriendFollowService {
                     `User with id ${id} not found.`,
                     HttpStatus.NOT_FOUND,
                   );
+
             } else {
                 let result = await this.friendFollowRepository
-                .createQueryBuilder("friend_follow")
-                .where("id=:id and friend_id = :friendId", {id: accept.id, friendId: id} )
+                .createQueryBuilder('friend_follow')
+                .where('friend_follow.account_id=:my_acc_id', {my_acc_id: id} )
+                .andWhere('friend_follow.friend_id = :friendId', {friendId: accept.id})
                 .getOne();
 
                 let result2 = await this.friendFollowRepository
                 .createQueryBuilder("friend_follow")
-                .where("id=:friendId and friend_id = :id", {id: accept.id, friendId: id} )
+                .where('friend_follow.account_id=:friendId', {friendId: accept.id} )
+                .andWhere('friend_follow.friend_id = :my_acc_id', {my_acc_id: id })
                 .getOne();
+
+            
+
                 if(result || result2) {
                     let final_result = result ? result : result2; 
+                    console.log(final_result);
+                    console.log(result2);
                     if(final_result.status === 1) {
                         throw new HttpException(
                             `This person was you friend.`,
                             HttpStatus.BAD_REQUEST,
                           );
-                    } else if(final_result.status === 2 && accept.status === 1) {
+                    } else if(result2.status === 2 && accept.status === 1) {
                         // accept
-                        var updated = { ...final_result, ...accept};
-                        let info = await this.friendFollowRepository.save(updated)
+                        // var updated = { ...result2, ...accept};
+                        result2.status = 1;
+                        let info = await this.friendFollowRepository.save(result2);
                         if(info) {
                             return "Friend accept successfully.";
                         } else {
                             return "Friend accept failed.";
                         }
-                    } else if(final_result.status === 2 && accept.status === 2) {
+                    } else if(result2.status === 2 && accept.status === 2) {
                         // refuse
-                        var info = await this.friendFollowRepository.remove(result)
+                        var info = await this.friendFollowRepository.remove(result2)
                         if(info) {
                             return "Friend refuse successfully.";
                         } else {
