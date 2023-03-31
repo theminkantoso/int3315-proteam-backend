@@ -259,145 +259,16 @@ UNLOCK TABLES;
 -- Table structure for table `skill_post`
 --
 
-DROP TABLE IF EXISTS `user_tokens`;
-CREATE TABLE `user_tokens` (
-  `id` int(11) NOT NULL,
-  `account_id` int(255) DEFAULT NULL,
-  `hash_token` varchar(255) DEFAULT NULL,
-  `token` blob DEFAULT NULL,
-  `type` enum('1') DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `files`
---
-
-DROP TABLE IF EXISTS `files`;
-CREATE TABLE `files` (
-  `id` int(11) NOT NULL,
-  `file_name` varchar(255) NOT NULL,
-  `original_name` varchar(255) NOT NULL,
-  `path` varchar(255) NOT NULL,
-  `extension` varchar(255) NOT NULL,
-  `mimetype` varchar(255) NOT NULL,
-  `size` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-
---
--- Chỉ mục cho các bảng đã đổ
---
-
---
--- Chỉ mục cho bảng `account`
---
-ALTER TABLE `account`
-  ADD PRIMARY KEY (`account_id`),
-  ADD KEY `name` (`name`),
-  ADD KEY `school` (`school`);
-
---
--- Chỉ mục cho bảng `conversation`
---
-ALTER TABLE `conversation`
-  ADD PRIMARY KEY (`conversation_id`);
-
---
--- Chỉ mục cho bảng `conversation_account`
---
-ALTER TABLE `conversation_account`
-  ADD PRIMARY KEY (`id`);
-
---
--- Chỉ mục cho bảng `friend_follow`
---
-ALTER TABLE `friend_follow`
-  ADD PRIMARY KEY (`id`);
-
---
--- Chỉ mục cho bảng `message`
---
-ALTER TABLE `message`
-  ADD PRIMARY KEY (`message_id`);
-
---
--- Chỉ mục cho bảng `notification`
---
-ALTER TABLE `notification`
-  ADD PRIMARY KEY (`noti_id`);
-
---
--- Chỉ mục cho bảng `post`
---
-ALTER TABLE `post`
-  ADD PRIMARY KEY (`post_id`);
-
---
--- Chỉ mục cho bảng `skill`
---
-ALTER TABLE `skill`
-  ADD PRIMARY KEY (`skill_id`);
-
---
--- Chỉ mục cho bảng `skill_account`
---
-ALTER TABLE `skill_account`
-  ADD PRIMARY KEY (`id`);
-
---
--- Chỉ mục cho bảng `skill_post`
---
-ALTER TABLE `skill_post`
-  ADD PRIMARY KEY (`id`);
-
---
--- Chỉ mục cho bảng `user_tokens`
---
-ALTER TABLE `user_tokens`
-  ADD PRIMARY KEY (`id`);
-
---
--- Chỉ mục cho bảng `files`
---
-ALTER TABLE `files`
-  ADD PRIMARY KEY (`id`);
-
---
--- AUTO_INCREMENT cho các bảng đã đổ
---
-
---
--- AUTO_INCREMENT cho bảng `account`
---
-ALTER TABLE `account`
-  MODIFY `account_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1638;
-
---
--- AUTO_INCREMENT cho bảng `conversation`
---
-ALTER TABLE `conversation`
-  MODIFY `conversation_id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT cho bảng `conversation_account`
---
-ALTER TABLE `conversation_account`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT cho bảng `friend_follow`
---
-ALTER TABLE `friend_follow`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- AUTO_INCREMENT cho bảng `message`
---
-ALTER TABLE `message`
-  MODIFY `message_id` int(11) NOT NULL AUTO_INCREMENT;
+DROP TABLE IF EXISTS `skill_post`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `skill_post` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `skill_id` int NOT NULL,
+  `post_id` int NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `skill_post`
@@ -425,25 +296,38 @@ CREATE TABLE `user_tokens` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+
+--
+-- Table structure for table `user_tokens`
+--
+
+DROP TABLE IF EXISTS `files`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `files` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `file_name` varchar(255) NOT NULL,
+  `path` varchar(255) NOT NULL,
+  `extensioin` varchar(255) NOT NULL,
+  `mimetype` varchar(255) NOT NULL,
+  `size` int NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
 --
 -- Dumping data for table `user_tokens`
 --
 
---
--- AUTO_INCREMENT cho bảng `user_tokens`
---
-ALTER TABLE `user_tokens`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-COMMIT;
+LOCK TABLES `user_tokens` WRITE;
+/*!40000 ALTER TABLE `user_tokens` DISABLE KEYS */;
+/*!40000 ALTER TABLE `user_tokens` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
---
--- AUTO_INCREMENT cho bảng `files`
---
-ALTER TABLE `files`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-COMMIT;
-
-
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
