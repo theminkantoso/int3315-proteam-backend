@@ -1869,7 +1869,7 @@ CREATE TABLE `user_tokens` (
   `account_id` int(255) DEFAULT NULL,
   `hash_token` varchar(255) DEFAULT NULL,
   `token` blob DEFAULT NULL,
-  `type` enum('1','','','') DEFAULT NULL
+  `type` enum('1') DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
