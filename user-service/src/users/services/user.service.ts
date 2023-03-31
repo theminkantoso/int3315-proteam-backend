@@ -91,19 +91,15 @@ export class UserService {
   // return await this.userRepository.save(foundUser);
   // }
 
-  async areFriend(userid: number, otherid: number): Promise<boolean> {
+  async getFriend(userid: number, otherid: number): Promise<any> {
     let result = await this.friendRepository
       .createQueryBuilder('friend_follow')
-      .where('friend_follow.status = 1 AND friend_follow.account_id = :userid AND friend_follow.friend_id = :otherid', {userid: userid,  otherid: otherid})
-      // .andWhere('friend_follow.account_id = :userid', { userid: userid })
-      // .andWhere('friend_follow.friend_id = :otherid', { otherid: otherid })
-      .orWhere('friend_follow.status = 1 AND friend_follow.account_id = :otherid AND friend_follow.friend_id = :userid', {userid: userid,  otherid: otherid})
+      // .where('friend_follow.status = 1 AND friend_follow.account_id = :userid AND friend_follow.friend_id = :otherid', {userid: userid,  otherid: otherid})
+      // .orWhere('friend_follow.status = 1 AND friend_follow.account_id = :otherid AND friend_follow.friend_id = :userid', {userid: userid,  otherid: otherid})
+      .where('friend_follow.account_id = :userid AND friend_follow.friend_id = :otherid', {userid: userid,  otherid: otherid})
+      .orWhere('friend_follow.account_id = :otherid AND friend_follow.friend_id = :userid', {userid: userid,  otherid: otherid})
       .getOne();
-    if (!result) {
-      return false;
-    } else {
-      return true;
-    }
+    return result;
   }
 
   async getFriendList(userid: number): Promise<any> {
