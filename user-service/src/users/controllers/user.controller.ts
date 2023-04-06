@@ -107,19 +107,21 @@ export class UserController {
   @ApiOperation({ summary: 'update user skills' })
   @ApiResponse({ status: 200, description: 'Updated skills' })
   @ApiNotFoundResponse({ status: 404, description: 'User not found' })
+  @UseGuards(AuthGuard('jwt'))
   @Patch("update-skills")
-  async updateSkills(@Body() skills: UpdateSkillsDto) {
-    let id = 1;
-    return instanceToPlain(this.userService.updateSkills(id, skills));
+  async updateSkills(@Req() req: Request, @Body() skills: UpdateSkillsDto) {
+    const acc_id = typeof(req['user'].id) === 'string' ? parseInt(req['user'].id) : req['user'].id;
+    return instanceToPlain(this.userService.updateSkills(acc_id, skills));
   }
 
   @ApiOperation({ summary: 'get user skills' })
   @ApiResponse({ status: 200, description: 'user skills' })
   @ApiNotFoundResponse({ status: 404, description: 'User not found' })
+  @UseGuards(AuthGuard('jwt'))
   @Patch("skills")
-  async skills() {
-    let id = 1;
-    return instanceToPlain(this.userService.getSkills(id));
+  async skills(@Req() req: Request) {
+    const acc_id = typeof(req['user'].id) === 'string' ? parseInt(req['user'].id) : req['user'].id;
+    return instanceToPlain(this.userService.getSkills(acc_id));
   }
 
 }
