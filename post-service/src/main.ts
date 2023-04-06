@@ -24,6 +24,7 @@ async function bootstrap() {
     .setDescription('The POST Service description')
     .setVersion('1.0')
     .addTag('POST-SERVICE')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('/posts/api', app, document);
