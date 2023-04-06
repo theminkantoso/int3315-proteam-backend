@@ -1,7 +1,7 @@
 import { UpdateSkillsDto } from '../dtos/update_skills.dto';
 import { UserService } from '../services/user.service';
 import { classToPlain, instanceToPlain } from 'class-transformer';
-import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Query, Req, Request, UseGuards } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBasicAuth,

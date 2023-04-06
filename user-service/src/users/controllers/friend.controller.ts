@@ -1,6 +1,6 @@
 import { UserService } from '../services/user.service';
 import { classToPlain, instanceToPlain } from 'class-transformer';
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, Request, UseGuards } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBasicAuth,
