@@ -39,7 +39,7 @@ services:
       depends_on:
         - mysql
       env_file:
-        - ./post_service/.env
+        - ./post-service/.env
     # chat_service:
     #   build: ./chat-service
     #   networks:
