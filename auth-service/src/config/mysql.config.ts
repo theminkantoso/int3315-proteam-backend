@@ -16,3 +16,5 @@ export const mysqlConnectionConfig: TypeOrmModuleOptions = {
   timezone: '+07:00',
   autoLoadEntities: true,
 };
+
+

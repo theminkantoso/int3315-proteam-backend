@@ -10,16 +10,12 @@ async function bootstrap() {
   // app.setGlobalPrefix(globalPrefix);
   const port = process.env.PORT || 3000;
 
-  const AUTH_SERVICE_URL = 'http://auth_service:3001';
-  const USER_SERVICE_URL = 'http://user_service:3002';
-  const POST_SERVICE_URL = 'http://post_service:3003';
-  const CHAT_SERVICE_URL = 'http://chat_service:3004';
-
-  // for localhost
-  // const AUTH_SERVICE_URL = 'http://localhost:3001';
-  // const USER_SERVICE_URL = 'http://localhost:3002';
-  // const POST_SERVICE_URL = 'http://localhost:3003';
-  // const CHAT_SERVICE_URL = 'http://localhost:3004';
+  const AUTH_SERVICE_URL = process.env.ENVIRONMENT == 'docker'? process.env.AUTH_SERVICE : process.env.AUTH_SERVICE_TUYEN;
+  const USER_SERVICE_URL = process.env.ENVIRONMENT == 'docker'? process.env.USER_SERVICE : process.env.USER_SERVICE_TUYEN;
+  const POST_SERVICE_URL = process.env.ENVIRONMENT == 'docker'? process.env.POST_SERVICE : process.env.POST_SERVICE_TUYEN;
+  const CHAT_SERVICE_URL = process.env.ENVIRONMENT == 'docker'? process.env.CHAT_SERVICE : process.env.CHAT_SERVICE_TUYEN;
+  const NOTI_SERVICE_URL = process.env.ENVIRONMENT == 'docker'? process.env.NOTI_SERVICE : process.env.NOTI_SERVICE_TUYEN;
+  const STATS_SERVICE_URL = process.env.ENVIRONMENT == 'docker'? process.env.STATS_SERVICE : process.env.STATS_SERVICE_TUYEN;
 
   // Proxy endpoints
   app.use(

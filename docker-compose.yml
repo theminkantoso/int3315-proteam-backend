@@ -7,8 +7,8 @@ services:
         ports:
             - 3000:3000
 
-        # env_file:
-        #   - ./.env
+        env_file:
+          - ./api-gateway/.env
 
     auth_service:
         build: ./auth-service
@@ -27,6 +27,8 @@ services:
             - 3002:3002
         depends_on:
             - mysql
+        env_file:
+          - ./user-service/.env
 
     # post_service:
     #   build: ./post-service
