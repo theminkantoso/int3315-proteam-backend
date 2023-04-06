@@ -30,13 +30,16 @@ services:
         env_file:
           - ./user-service/.env
 
-    # post_service:
-    #   build: ./post-service
-    #   networks:
-    #     - mysql
-    #   ports:
-    #     - 3003:3003
-
+    post_service:
+      build: ./post-service
+      networks:
+        - mysql
+      ports:
+        - 3003:3003
+      depends_on:
+        - mysql
+      env_file:
+        - ./post_service/.env
     # chat_service:
     #   build: ./chat-service
     #   networks:
