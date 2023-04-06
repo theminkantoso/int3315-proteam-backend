@@ -222,7 +222,7 @@ export class UserService {
             'skill_id in (select skill_id from skill_account where account_id=:account_id)',
             { account_id: id },
           )
-          .getRawMany();
+          .getMany();
         if (!skills) {
           return [];
         } else {
