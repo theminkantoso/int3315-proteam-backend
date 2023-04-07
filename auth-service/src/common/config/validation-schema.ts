@@ -20,4 +20,7 @@ export default Joi.object({
   [ConfigKey.AWS_REGION]: Joi.string().required(),
   [ConfigKey.AWS_S3_BUCKET]: Joi.string().required(),
   [ConfigKey.AWS_S3_DOMAIN]: Joi.string().required(),
+  [ConfigKey.BASE_URL_APP]: Joi.string().required(),
+  [ConfigKey.REFRESH_TOKEN_GMAIL]: Joi.string().required(),
+  [ConfigKey.EMAIL]: Joi.string().required(),
 });

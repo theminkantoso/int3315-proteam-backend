@@ -15,6 +15,14 @@ export class FileService {
     private readonly configService: ConfigService,
   ) {}
 
+  private S3Instance = new AWS.S3({
+    accessKeyId: this.configService.get(ConfigKey.AWS_ACCESS_KEY_ID),
+    secretAccessKey: this.configService.get(ConfigKey.AWS_SECRET_ACCESS_KEY),
+    region: this.configService.get(ConfigKey.AWS_REGION),
+    signatureVersion: 'v4',
+  });
+  private readonly bucketName = this.configService.get(ConfigKey.AWS_S3_BUCKET);
+
   async createFile(file: RegisterFileDto): Promise<RegisterFileDto> {
     try {
       const newFile = {
@@ -41,14 +49,6 @@ export class FileService {
       throw error;
     }
   }
-
-  private S3Instance = new AWS.S3({
-    accessKeyId: this.configService.get(ConfigKey.AWS_ACCESS_KEY_ID),
-    secretAccessKey: this.configService.get(ConfigKey.AWS_SECRET_ACCESS_KEY),
-    region: this.configService.get(ConfigKey.AWS_REGION),
-    signatureVersion: 'v4',
-  });
-  private readonly bucketName = this.configService.get(ConfigKey.AWS_S3_BUCKET);
 
   async getS3PresignedUrl(path: string, originalName: string) {
     try {

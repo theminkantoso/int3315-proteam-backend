@@ -14,6 +14,7 @@ import { ICreateUserBody, IGoogleLoginLinkQuery } from '../auth.interfaces';
 import { ChangePasswordDto } from '../dto/requests/update-profile.dto';
 import { UserToken } from '../entities/user-token.entity';
 import { User } from '../entities/user.entity';
+import nodemailer from 'nodemailer';
 
 export const usersAttributes: (keyof User)[] = [
   'email',
@@ -69,6 +70,38 @@ export class AuthService {
     return {
       token: accessToken,
       expiresIn: accessTokenExpiredIn,
+    };
+  }
+
+  /**
+   *
+   * @param account_id
+   * @return resetString and resetPasswordExpiredIn
+   */
+  private generateResetString(user: User) {
+    const resetPasswordExpiredIn = this.configService.get(
+      ConfigKey.TOKEN_EXPIRED_IN,
+    );
+    const secretResetPasswordKey = this.configService.get(
+      ConfigKey.JWT_SECRET_ACCESS_TOKEN_KEY,
+    );
+    const resetPasswordOptions = {
+      secret: secretResetPasswordKey,
+      expiresIn: resetPasswordExpiredIn,
+    };
+    const payloadAccessToken = {
+      id: user.account_id,
+      email: user.email,
+      role: user.role,
+      expiresIn: resetPasswordExpiredIn,
+    };
+    const resetString = this.jwtService.sign(
+      payloadAccessToken,
+      resetPasswordOptions,
+    );
+    return {
+      resetString: resetString,
+      expiresIn: resetPasswordExpiredIn,
     };
   }
 
@@ -148,6 +181,18 @@ export class AuthService {
       const user = await this.userRepository.findOne({
         select: attributes,
         where: { email },
+      });
+      return user;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  public async getUserById(id: number, attributes = usersAttributes) {
+    try {
+      const user = await this.userRepository.findOne({
+        select: attributes,
+        where: { account_id: id },
       });
       return user;
     } catch (error) {
@@ -315,6 +360,76 @@ export class AuthService {
     try {
       const newUser = this.userRepository.save(userData);
       return newUser;
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  public async sendEmailToResetPassword(user: User, redirectUri: string) {
+    try {
+      const adminEmail = this.configService.get(ConfigKey.EMAIL);
+      const refreshTokenGmail = this.configService.get(
+        ConfigKey.REFRESH_TOKEN_GMAIL,
+      );
+      const clientSecret = this.configService.get(
+        ConfigKey.GOOGLE_CLIENT_SECRET,
+      );
+      const clientId = this.configService.get(ConfigKey.GOOGLE_CLIENT_ID);
+      const googleClient = new OAuth2Client({ clientSecret, clientId });
+      googleClient.setCredentials({ refresh_token: refreshTokenGmail });
+
+      const myAccessTokenObj = await googleClient.getAccessToken();
+      const myAccessToken = myAccessTokenObj?.token;
+
+      const transport = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          type: 'OAuth2',
+          user: adminEmail,
+          clientId,
+          clientSecret,
+          refreshToken: refreshTokenGmail,
+          accessToken: myAccessToken,
+        },
+      });
+
+      // calculate data to include in email content
+      const userId = user.account_id;
+      const resetString = this.generateResetString(user);
+      const urlReset = `${redirectUri}?userId=${userId}&resetString=${resetString.resetString}`;
+
+      await transport.sendMail(
+        {
+          to: user.email,
+          subject: 'RETSET PASSWORD PROTEAM',
+          text: 'Plaintext version of the message',
+          html: `<p>Visit the following link to reset your password <a target="_blank" href="${urlReset}">Rest password Proteam</a></p>`,
+        },
+        (error, info) => {
+          console.log(error);
+        },
+      );
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  public async resetPassword(user: User, newPassword: string) {
+    try {
+      const newPasswordEncoder = bcrypt.hashSync(
+        newPassword,
+        bcrypt.genSaltSync(10),
+      );
+
+      await this.userRepository.update(user.account_id, {
+        password: newPasswordEncoder,
+      });
+
+      const savedUser = await this.userRepository.findOne({
+        where: { account_id: user.account_id },
+      });
+      delete savedUser.password;
+      return savedUser;
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
