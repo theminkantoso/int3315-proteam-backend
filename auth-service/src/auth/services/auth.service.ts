@@ -434,4 +434,16 @@ export class AuthService {
       throw new InternalServerErrorException(error);
     }
   }
+  public async checkResetStringInvalid(user: User, resetString: string) {
+    try {
+      const payload = await this.jwtService.verify(resetString, {
+        secret: this.configService.get(ConfigKey.JWT_SECRET_ACCESS_TOKEN_KEY),
+        ignoreExpiration: false,
+      });
+
+      return payload.id === user.account_id;
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
 }
