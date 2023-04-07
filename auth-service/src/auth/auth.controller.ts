@@ -30,7 +30,13 @@ import {
   GoogleLoginSchema,
 } from './dto/requests/google-login.dto';
 import { LoginDto, LoginSchema } from './dto/requests/login.dto';
-import { changePasswordSchema } from './dto/requests/update-profile.dto';
+import {
+  GetLinkToResetPasswordDto,
+  ResetPasswordDto,
+  changePasswordSchema,
+  getLinkToResetPasswordSchema,
+  resetPasswordSchema,
+} from './dto/requests/update-profile.dto';
 import { User } from './entities/user.entity';
 import { AuthService, usersAttributes } from './services/auth.service';
 
@@ -242,6 +248,53 @@ export class AuthController {
         accessToken,
         refreshToken,
       });
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  @Post('reset-password-link')
+  @UsePipes(new JoiValidationPipe(getLinkToResetPasswordSchema))
+  async getResetPasswordLink(
+    @Body(new TrimBodyPipe()) data: GetLinkToResetPasswordDto,
+  ) {
+    try {
+      const user = await this.authService.getUserByEmail(data.email, [
+        ...usersAttributes,
+      ]);
+      if (!user) {
+        const message = 'Email does not exist';
+        return new ErrorResponse(HttpStatus.NOT_FOUND, message, []);
+      }
+      // send email
+      await this.authService.sendEmailToResetPassword(user, data.redirectUri);
+
+      return new SuccessResponse({});
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  @Post('reset-password')
+  @UsePipes(new JoiValidationPipe(resetPasswordSchema))
+  async resetPasswordLink(@Body(new TrimBodyPipe()) data: ResetPasswordDto) {
+    try {
+      const user = await this.authService.getUserById(data.userId, [
+        ...usersAttributes,
+      ]);
+      if (!user) {
+        const message = 'Email does not exist';
+        return new ErrorResponse(HttpStatus.NOT_FOUND, message, []);
+      }
+
+      // check reset string here
+
+      const newUserData = await this.authService.resetPassword(
+        user,
+        data.newPassword,
+      );
+
+      return new SuccessResponse(newUserData);
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

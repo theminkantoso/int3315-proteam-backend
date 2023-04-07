@@ -7,7 +7,6 @@ export interface IGoogleLoginLinkQuery {
   state: string;
   redirectUri: string;
 }
-
 export interface ICreateUserBody {
   name: string;
   email: string;
