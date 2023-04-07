@@ -264,7 +264,7 @@ export class AuthController {
       ]);
       if (!user) {
         const message = 'Email does not exist';
-        return new ErrorResponse(HttpStatus.NOT_FOUND, message, []);
+        return new ErrorResponse(HttpStatus.ITEM_NOT_FOUND, message, []);
       }
       // send email
       await this.authService.sendEmailToResetPassword(user, data.redirectUri);
@@ -288,6 +288,13 @@ export class AuthController {
       }
 
       // check reset string here
+      const checkResetStringInvalid =
+        await this.authService.checkResetStringInvalid(user, data.resetString);
+
+      if (!checkResetStringInvalid) {
+        const message = '';
+        return new ErrorResponse(HttpStatus.FORBIDDEN, message, []);
+      }
 
       const newUserData = await this.authService.resetPassword(
         user,

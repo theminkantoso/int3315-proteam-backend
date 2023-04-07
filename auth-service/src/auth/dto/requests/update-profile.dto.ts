@@ -44,14 +44,12 @@ export class GetLinkToResetPasswordDto {
 
 export const resetPasswordSchema = Joi.object({
   newPassword: Joi.string()
-    .email()
     .max(INPUT_TEXT_MAX_LENGTH)
     .required()
     .label('new password'),
   userId: Joi.number().required().label('user ID'),
   resetString: Joi.string()
     .max(TEXTAREA_MAX_LENGTH)
-    .uri()
     .required()
     .label('reset string'),
 });
