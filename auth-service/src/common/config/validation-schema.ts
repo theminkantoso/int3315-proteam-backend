@@ -22,5 +22,6 @@ export default Joi.object({
   [ConfigKey.AWS_S3_DOMAIN]: Joi.string().required(),
   [ConfigKey.BASE_URL_APP]: Joi.string().required(),
   [ConfigKey.REFRESH_TOKEN_GMAIL]: Joi.string().required(),
-  [ConfigKey.EMAIL]: Joi.string().required(),
+  [ConfigKey.ADMIN_MAIL]: Joi.string().required(),
+  [ConfigKey.RESET_PASSWORD_EXPIRED_IN]: Joi.string().required(),
 });

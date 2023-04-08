@@ -90,8 +90,7 @@ export class AuthController {
         refreshToken,
       });
     } catch (error) {
-      // throw new InternalServerErrorException(error);
-      new HttpException('message', 400, { cause: new Error(error) });
+      throw new InternalServerErrorException(error);
     }
   }
 

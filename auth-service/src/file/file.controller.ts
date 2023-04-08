@@ -22,7 +22,9 @@ import { TrimBodyPipe } from 'src/common/pipe/trim.body.pipe';
 import { JoiValidationPipe } from 'src/common/pipe/joi.validation.pipe';
 import { ErrorResponse, SuccessResponse } from 'src/common/helper/response';
 import { JwtGuard } from 'src/common/guards/jwt.guard';
-@Controller('file')
+@Controller({
+  path: 'file',
+})
 @UseGuards(JwtGuard)
 export class FileController {
   constructor(private readonly fileService: FileService) {}
