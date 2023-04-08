@@ -39,6 +39,7 @@ export class FileService {
       };
       const saveFile = await this.fileRepository.save(newFile);
       return {
+        id: saveFile.id,
         fileName: saveFile.file_name,
         originalName: saveFile.original_name,
         path: saveFile.path,
