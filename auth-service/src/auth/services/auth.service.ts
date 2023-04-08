@@ -80,7 +80,7 @@ export class AuthService {
    */
   private generateResetString(user: User) {
     const resetPasswordExpiredIn = this.configService.get(
-      ConfigKey.TOKEN_EXPIRED_IN,
+      ConfigKey.REFRESH_TOKEN_EXPIRED_IN,
     );
     const secretResetPasswordKey = this.configService.get(
       ConfigKey.JWT_SECRET_ACCESS_TOKEN_KEY,
@@ -227,7 +227,7 @@ export class AuthService {
       });
       const res = await this.databaseService.checkItemExist(
         UserToken,
-        'hashToken',
+        'hash_token',
         data.hashToken,
       );
       return res;
@@ -367,7 +367,7 @@ export class AuthService {
 
   public async sendEmailToResetPassword(user: User, redirectUri: string) {
     try {
-      const adminEmail = this.configService.get(ConfigKey.EMAIL);
+      const adminEmail = this.configService.get(ConfigKey.ADMIN_MAIL);
       const refreshTokenGmail = this.configService.get(
         ConfigKey.REFRESH_TOKEN_GMAIL,
       );

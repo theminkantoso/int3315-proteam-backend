@@ -6,10 +6,10 @@ export class File extends BaseEntity {
   id: number;
 
   @Column({ length: 255, nullable: false })
-  fileName: string;
+  file_name: string;
 
   @Column({ length: 255, nullable: false })
-  originalName: string;
+  original_name: string;
 
   @Column({ length: 255, nullable: false })
   path: string;

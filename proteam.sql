@@ -307,8 +307,9 @@ DROP TABLE IF EXISTS `files`;
 CREATE TABLE `files` (
   `id` int NOT NULL AUTO_INCREMENT,
   `file_name` varchar(255) NOT NULL,
+  `original_name` varchar(255) NOT NULL,
   `path` varchar(255) NOT NULL,
-  `extensioin` varchar(255) NOT NULL,
+  `extension` varchar(255) NOT NULL,
   `mimetype` varchar(255) NOT NULL,
   `size` int NOT NULL,
   PRIMARY KEY (`id`)
