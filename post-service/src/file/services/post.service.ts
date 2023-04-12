@@ -28,9 +28,39 @@ export class PostService {
         return decodedJwt;
     }
 
+    async allPosts(id: number): Promise<Post[]>  {
+      try {
+         let user = await this.userRepository.findOneOrFail({
+          where: { account_id: id },
+        });
+        if(!user) {
+          throw new HttpException(
+              `User with id ${id} not found.`,
+              HttpStatus.NOT_FOUND,
+            );
+        }
+          let result = await this.postRepository.createQueryBuilder()
+          if(user.role === 0 ) {
+            result.andWhere(':gpa between min_gpa and max_gpa', {gpa: user.gpa});
+          }
+          let post = await result.orderBy('create_time', 'DESC').getMany();
+          if(post.length > 0) {
+              return post;
+          } else {
+              return [];
+          }
+      } catch (err) {
+          console.log('error: ', err.message ?? err);
+          throw new HttpException(
+            err.message,
+            err.HttpStatus
+          );
+      }
+  }
+
     async postsByAccId(id: number): Promise<Post[]>  {
         try {
-           let user =  this.userRepository.findOneOrFail({
+           let user = await this.userRepository.findOneOrFail({
             where: { account_id: id },
           });
           if(!user) {
@@ -68,16 +98,22 @@ export class PostService {
               HttpStatus.NOT_FOUND,
             );
         }
-        let post = await this.postRepository.createQueryBuilder('post')
-        .where('post_id = :post_id AND account_id = :account_id', {post_id: post_id, account_id: acc_id})
-        .getOne();
+        // let post = await this.postRepository.createQueryBuilder('post')
+        // .where('post_id = :post_id AND account_id = :account_id', {post_id: post_id, account_id: acc_id})
+        // .getOne();
+        let result = await this.postRepository.createQueryBuilder('post')
+        .where('post_id = :post_id', {post_id: post_id});
+        if(user.role === 0 ) {
+          result.andWhere(':gpa between min_gpa and max_gpa', {gpa: user.gpa});
+        }
+        let post = await result.getOne();
         if(!post) {
           throw new HttpException(
               `Post not found.`,
               HttpStatus.NOT_FOUND,
             );
         } else {
-          let postRes: PostResDto = {post_id: post.post_id, account_id: post.account_id, content: post.content, create_time: post.create_time, min_gpa: post.min_gpa, max_gpa: post.max_gpa, skills: []};
+          let postRes: PostResDto = {post_id: post.post_id, account_id: post.account_id, content: post.content, image: post.image, file: post.file, create_time: post.create_time, min_gpa: post.min_gpa, max_gpa: post.max_gpa, skills: []};
           let skills = await this.skillRepository.createQueryBuilder('skill')
             .innerJoin(
               SkillPost,
@@ -128,7 +164,7 @@ export class PostService {
           }
         }
         // save
-        let post: PostDto = {account_id: acc_id, content: postDto.content, create_time: new Date(), min_gpa: postDto.min_gpa, max_gpa: postDto.max_gpa};
+        let post: PostDto = {account_id: acc_id, content: postDto.content, image: postDto.image, file: postDto.file, create_time: new Date(), min_gpa: postDto.min_gpa, max_gpa: postDto.max_gpa};
         let info = await this.postRepository.insert(post);
           if(info) {
               for (let i = 0; i < count; i++) {
@@ -187,7 +223,7 @@ export class PostService {
               }
             }
             // update
-            let postUpdate: PostUpdateDto = {content: postDto.content, min_gpa: postDto.min_gpa, max_gpa: postDto.max_gpa};
+            let postUpdate: PostUpdateDto = {content: postDto.content, image: postDto.image, file: postDto.file, min_gpa: postDto.min_gpa, max_gpa: postDto.max_gpa};
             let updated = { ...post, ...postUpdate };
             let info =  await this.postRepository.save(updated);
             if(info) {
@@ -270,4 +306,44 @@ export class PostService {
             );
         }
     }
+
+    async postsByOtherUserId(id: number, user_id: number): Promise<Post[]>  {
+      try {
+         let me = await this.userRepository.findOneOrFail({
+          where: { account_id: id },
+        });
+        if(!me) {
+          throw new HttpException(
+              `User with id ${id} not found.`,
+              HttpStatus.NOT_FOUND,
+            );
+        }
+        let other = await this.userRepository.findOneOrFail({
+          where: { account_id: user_id },
+        });
+        if(!other) {
+          throw new HttpException(
+              `User with id ${user_id} not found.`,
+              HttpStatus.NOT_FOUND,
+            );
+        }
+          let result = await this.postRepository.createQueryBuilder()
+          .where('account_id = :id', {id: user_id})
+          if(me.role === 0 ) {
+            result.andWhere(':gpa between min_gpa and max_gpa', {gpa: me.gpa});
+          }
+          let post = await result.orderBy('create_time', 'DESC').getMany();
+          if(post.length > 0) {
+              return post;
+          } else {
+              return [];
+          }
+      } catch (err) {
+          console.log('error: ', err.message ?? err);
+          throw new HttpException(
+            err.message,
+            err.HttpStatus
+          );
+      }
+  }
 }

@@ -13,13 +13,13 @@ export class PostUpdateDto {
     @ApiProperty({default: ""})
     content: string;
 
-    // @IsString()
-    // @ApiProperty({default: ""})
-    // image: string;
+    @IsString()
+    @ApiProperty({default: ""})
+    image: string;
 
-    // @IsString()
-    // @ApiProperty({default: ""})
-    // file: string;
+    @IsString()
+    @ApiProperty({default: ""})
+    file: string;
 
     @IsNumber()
     @Min(0)

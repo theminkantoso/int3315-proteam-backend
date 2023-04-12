@@ -18,13 +18,14 @@ export class PostResDto {
     @IsString()
     content: string;
 
-    // @IsString()
-    // @ApiProperty({default: ""})
-    // image: string;
+    @IsString()
+    @ApiProperty({default: ""})
+    image: string;
 
-    // @IsString()
-    // @ApiProperty({default: ""})
-    // file: string;
+    @IsString()
+    @ApiProperty({default: ""})
+    file: string;
+
     @IsString()
     create_time: Date;
 

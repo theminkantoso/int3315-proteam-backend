@@ -20,12 +20,23 @@ import { PostDto, PostReqDto } from '../dtos';
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
-  @ApiOperation({ summary: 'list post' })
+  @ApiOperation({ summary: 'all post' })
   @ApiResponse({ status: 200, description: 'List post of user' })
   @UseGuards(AuthGuard('jwt'))
   @Get('all')
+  async allPosts(@Req() req: Request) {
+    const acc_id = typeof(req['user'].id) === 'string' ? parseInt(req['user'].id) : req['user'].id;
+    // const acc_id = 1;
+    return this.postService.allPosts(acc_id);
+  }
+
+  @ApiOperation({ summary: 'post of user' })
+  @ApiResponse({ status: 200, description: 'List post of user' })
+  @UseGuards(AuthGuard('jwt'))
+  @Get('user')
   async posts(@Req() req: Request) {
     const acc_id = typeof(req['user'].id) === 'string' ? parseInt(req['user'].id) : req['user'].id;
+    // const acc_id = 1;
     return this.postService.postsByAccId(acc_id);
   }
 
@@ -79,6 +90,16 @@ export class PostController {
     const acc_id = typeof(req['user'].id) === 'string' ? parseInt(req['user'].id) : req['user'].id;
     // const acc_id = 1;
     return this.postService.delete(acc_id, post_id);
+  }
+
+  @ApiOperation({ summary: 'list post of other user' })
+  @ApiResponse({ status: 200, description: 'List post of other user' })
+  @UseGuards(AuthGuard('jwt'))
+  @Get('other-user')
+  async postsByUserId(@Req() req: Request, @Query('user_id', ParseIntPipe) user_id?: number) {
+    const acc_id = typeof(req['user'].id) === 'string' ? parseInt(req['user'].id) : req['user'].id;
+    // const acc_id = 3;
+    return this.postService.postsByOtherUserId(acc_id, user_id);
   }
 
 }

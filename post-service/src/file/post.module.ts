@@ -11,13 +11,15 @@ import { SkillPost } from './entities/skill_post.entity';
 import { PostController } from './controllers/post.controller';
 import { PostService } from './services/post.service';
 import { User } from './entities/user.entity';
+import { SearchController } from './controllers/search.controller';
+import { SearchService } from './services/search.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Post, Skill, SkillPost, User ]),
     JwtModule.register({}),
     PassportModule],
-  controllers: [PostController],
-  providers: [JwtService, JwtStrategy, PostService],
+  controllers: [PostController, SearchController],
+  providers: [JwtService, JwtStrategy, PostService, SearchService],
   exports: [PostModule]
 })
 export class PostModule {}
