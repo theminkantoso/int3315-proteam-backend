@@ -39,11 +39,14 @@ export class PostService {
               HttpStatus.NOT_FOUND,
             );
         }
-          let result = await this.postRepository.createQueryBuilder()
+          let result = await this.postRepository.createQueryBuilder('post')
+                .select("post.*, account.name, account.avatar")
+                .from(User, "account")
+                .where('post.account_id = account.account_id')
           if(user.role === 0 ) {
             result.andWhere(':gpa between min_gpa and max_gpa', {gpa: user.gpa});
           }
-          let post = await result.orderBy('create_time', 'DESC').getMany();
+          let post = await result.orderBy('create_time', 'DESC').getRawMany();
           if(post.length > 0) {
               return post;
           } else {
@@ -69,10 +72,13 @@ export class PostService {
                 HttpStatus.NOT_FOUND,
               );
           }
-            let post = await this.postRepository.createQueryBuilder()
-            .where('account_id = :id', {id: id})
+            let post = await this.postRepository.createQueryBuilder('post')
+            .select("post.*, account.name, account.avatar")
+            .from(User, "account")
+            .where('post.account_id = account.account_id')
+            .andWhere('post.account_id = :id', {id: id})
             .orderBy('create_time', 'DESC')
-            .getMany();
+            .getRawMany();
             if(post.length > 0) {
                 return post;
             } else {
@@ -102,18 +108,21 @@ export class PostService {
         // .where('post_id = :post_id AND account_id = :account_id', {post_id: post_id, account_id: acc_id})
         // .getOne();
         let result = await this.postRepository.createQueryBuilder('post')
-        .where('post_id = :post_id', {post_id: post_id});
-        if(user.role === 0 ) {
-          result.andWhere(':gpa between min_gpa and max_gpa', {gpa: user.gpa});
+        .select("post.*, account.name, account.avatar")
+        .from(User, "account")
+        .where('post.account_id = account.account_id')
+        .andWhere('post_id = :post_id', {post_id: post_id});
+        if(user.role === 0) {
+          result.andWhere('((:gpa between min_gpa and max_gpa) or post.account_id = :acc_id)', {gpa: user.gpa, acc_id: acc_id});
         }
-        let post = await result.getOne();
+        let post = await result.getRawOne();
         if(!post) {
           throw new HttpException(
               `Post not found.`,
               HttpStatus.NOT_FOUND,
             );
         } else {
-          let postRes: PostResDto = {post_id: post.post_id, account_id: post.account_id, content: post.content, image: post.image, file: post.file, create_time: post.create_time, min_gpa: post.min_gpa, max_gpa: post.max_gpa, skills: []};
+          let postRes: PostResDto = {post_id: post.post_id, account_id: post.account_id, content: post.content, image: post.image, file: post.file, create_time: post.create_time, min_gpa: post.min_gpa, max_gpa: post.max_gpa, name: post.name, avatar: post.avatar, skills: []};
           let skills = await this.skillRepository.createQueryBuilder('skill')
             .innerJoin(
               SkillPost,
@@ -327,12 +336,15 @@ export class PostService {
               HttpStatus.NOT_FOUND,
             );
         }
-          let result = await this.postRepository.createQueryBuilder()
-          .where('account_id = :id', {id: user_id})
+          let result = await this.postRepository.createQueryBuilder('post')
+          .select("post.*, account.name, account.avatar")
+          .from(User, "account")
+          .where('post.account_id = account.account_id')
+          .andWhere('post.account_id = :id', {id: user_id})
           if(me.role === 0 ) {
             result.andWhere(':gpa between min_gpa and max_gpa', {gpa: me.gpa});
           }
-          let post = await result.orderBy('create_time', 'DESC').getMany();
+          let post = await result.orderBy('create_time', 'DESC').getRawMany();
           if(post.length > 0) {
               return post;
           } else {

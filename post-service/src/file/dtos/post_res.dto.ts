@@ -35,6 +35,12 @@ export class PostResDto {
     @IsNumber()
     max_gpa: number;
 
+    @IsString()
+    name: string;
+
+    @IsString()
+    avatar: string;
+
     @IsArray()
     skills: SkillDto[];
 }

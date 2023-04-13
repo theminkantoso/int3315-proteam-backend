@@ -4,9 +4,9 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as jwt from 'jsonwebtoken';
 import { User } from '../entities/user.entity';
-import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Post } from '../entities/post.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class SearchService {
@@ -31,14 +31,19 @@ export class SearchService {
                   );
               }
             let posts = await this.postRepository
-             .createQueryBuilder('post')
-             .andWhere(':gpa between min_gpa and max_gpa', {gpa: user.gpa});
+                .createQueryBuilder('post')
+                .select("post.*, account.name, account.avatar")
+                .from(User, "account")
+                .where('post.account_id = account.account_id')
+             if(user.role === 0 ) {
+                posts.andWhere(':gpa between min_gpa and max_gpa', {gpa: user.gpa});
+              }
               if(search.content !== null && search.content !== undefined && search.content !== '') {
                 posts.andWhere("LOWER(content) LIKE :content", { content:`%${search.content}%` })
              } if(search.skills != null && search.skills != undefined && search.skills.length > 0) {
                 posts.andWhere(" EXISTS(select skill_id from skill_post where post.post_id=skill_post.post_id and skill_id IN (:list)) ", {list: search.skills})
              }
-             let list = posts.skip(search.page_number).take(search.limit).getMany();
+             let list = posts.orderBy('create_time', 'DESC').skip(search.page_number).take(search.limit).getRawMany();
             if(!list) {
                 return [];
             }
