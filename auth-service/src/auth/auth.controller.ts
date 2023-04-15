@@ -113,10 +113,7 @@ export class AuthController {
     body,
   ) {
     try {
-      const user = await this.databaseService.getDataById(
-        User,
-        req.loginUser.id,
-      );
+      const user = await this.authService.getUserById(req.loginUser.id);
 
       if (!user) {
         const message = 'user does not exist';
