@@ -58,6 +58,15 @@ services:
 
         volumes:
             - proteam-value:/var/lib/mysql
+    
+    rabbitmq:
+        image: rabbitmq:3.11-management
+        networks:
+            - mysql
+        ports:
+            - 5672:5672
+            - 15672:15672
+
 volumes:
     proteam-value:
 
