@@ -2,6 +2,7 @@ import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.int
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { RmqService } from './common/rabbit/rabbitmq.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
@@ -17,17 +18,20 @@ async function bootstrap() {
     methods: ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
   };
   app.enableCors(corsOptions);
-  app.setGlobalPrefix('/posts');
+  app.setGlobalPrefix('/noti');
 
   const config = new DocumentBuilder()
-    .setTitle('POST-SERVICE')
-    .setDescription('The POST Service description')
+    .setTitle('NOTI-SERVICE')
+    .setDescription('The NOTI Service description')
     .setVersion('1.0')
-    .addTag('POST-SERVICE')
+    .addTag('NOTI-SERVICE')
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('/posts/api', app, document);
-  await app.listen(3003);
+  SwaggerModule.setup('/noti/api', app, document);
+  const rmqService = app.get<RmqService>(RmqService);
+  app.connectMicroservice(rmqService.getOptions('NOTI'));
+  await app.startAllMicroservices();
+  await app.listen(3005);
 }
 bootstrap();

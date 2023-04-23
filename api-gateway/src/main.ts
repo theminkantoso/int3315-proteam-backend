@@ -72,6 +72,14 @@ async function bootstrap() {
     }),
   );
 
+  app.use(
+    '/noti',
+    createProxyMiddleware({
+      target: NOTI_SERVICE_URL,
+      changeOrigin: true,
+    }),
+  );
+
   // Swagger
   const config = new DocumentBuilder()
     .setTitle('API-GATEWAY')

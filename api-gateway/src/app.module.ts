@@ -33,6 +33,14 @@ import { AppService } from './app.service';
         options: { port: 3004 },
       },
     ]),
+
+    ClientsModule.register([
+      {
+        name: 'NOTI_SERVICE',
+        transport: Transport.TCP,
+        options: { port: 3005 },
+      },
+    ]),
   ],
   controllers: [AppController],
   providers: [AppService],
