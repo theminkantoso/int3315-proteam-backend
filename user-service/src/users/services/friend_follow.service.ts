@@ -3,7 +3,10 @@ import { FriendRequestDto } from './../dtos/friend_follow/friend_request.dto';
 import { AcceptFriendDto } from './../dtos/friend_follow/accept_friend.dto';
 import { FriendFollowDto } from './../dtos/friend_follow/friend_follow.dto';
 import { FriendFollow } from '../entities/friend_follow.entity';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { lastValueFrom } from 'rxjs';
+import { NOTI_SERVICE } from '../constants/services';
+import { ClientProxy } from '@nestjs/microservices';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as jwt from 'jsonwebtoken';
@@ -15,7 +18,8 @@ import * as bcrypt from 'bcrypt';
 export class FriendFollowService {
     constructor(private readonly jwtService: JwtService,
         @InjectRepository(FriendFollow) private friendFollowRepository: Repository<FriendFollow>,
-        @InjectRepository(User) private userRepository: Repository<User>) {}
+        @InjectRepository(User) private userRepository: Repository<User>,
+        @Inject(NOTI_SERVICE) private notiClient: ClientProxy,) {}
 
     decodeJwt(token_in: string) {
         const decodedJwt = this.jwtService.decode(token_in);
@@ -30,9 +34,9 @@ export class FriendFollowService {
                     HttpStatus.BAD_REQUEST,
                   );
             }
-            var user = await this.userRepository.findOne({
-                where: { account_id: id },
-              });
+            var user = await this.userRepository.createQueryBuilder()
+            .where("account_id = :id", {id: id})
+            .getOne();
             var friend = await this.userRepository.findOne({
                 where: { account_id: friendRequestDto.friend_id },
               });
@@ -67,6 +71,13 @@ export class FriendFollowService {
                     let friendRequest: FriendFollowDto = { account_id: id, friend_id: friendRequestDto.friend_id, status: 2 };
                     let info = await this.friendFollowRepository.insert(friendRequest)
                     if(info) {
+                        await lastValueFrom(
+                            this.notiClient.emit('friend_request', {
+                              friendRequest,
+                              user,
+                              info
+                            }),
+                          );
                         return "Friend request sent successfully.";
                     } else {
                         return "Friend request failed.";
@@ -100,11 +111,11 @@ export class FriendFollowService {
                   );
 
             } else {
-                let result = await this.friendFollowRepository
-                .createQueryBuilder('friend_follow')
-                .where('friend_follow.account_id=:my_acc_id', {my_acc_id: id} )
-                .andWhere('friend_follow.friend_id = :friendId', {friendId: accept.id})
-                .getOne();
+                // let result = await this.friendFollowRepository
+                // .createQueryBuilder('friend_follow')
+                // .where('friend_follow.account_id=:my_acc_id', {my_acc_id: id} )
+                // .andWhere('friend_follow.friend_id = :friendId', {friendId: accept.id})
+                // .getOne();
 
                 let result2 = await this.friendFollowRepository
                 .createQueryBuilder("friend_follow")
@@ -112,13 +123,13 @@ export class FriendFollowService {
                 .andWhere('friend_follow.friend_id = :my_acc_id', {my_acc_id: id })
                 .getOne();
 
-            
-
-                if(result || result2) {
-                    let final_result = result ? result : result2; 
-                    console.log(final_result);
-                    console.log(result2);
-                    if(final_result.status === 1) {
+                // if(result || result2) {
+                    // let final_result = result ? result : result2; 
+                    // let final_result = result2;
+                    // console.log(final_result);
+                    // console.log(result2);
+                if(result2) {
+                    if(result2.status === 1) {
                         throw new HttpException(
                             `This person was you friend.`,
                             HttpStatus.BAD_REQUEST,
@@ -129,6 +140,12 @@ export class FriendFollowService {
                         result2.status = 1;
                         let info = await this.friendFollowRepository.save(result2);
                         if(info) {
+                            await lastValueFrom(
+                                this.notiClient.emit('accept_friend', {
+                                  result2,
+                                  user
+                                }),
+                              );
                             return "Friend accept successfully.";
                         } else {
                             return "Friend accept failed.";

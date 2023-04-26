@@ -3,7 +3,7 @@ import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 @Entity({ name: 'notification' })
 export class Noti extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  noti_id: number;
 
   @Column()
   account_id: number;
@@ -12,8 +12,11 @@ export class Noti extends BaseEntity {
   description: string;
 
   @Column()
-  isRead: number;
+  is_read: number;
 
   @Column()
   create_time: Date;
+
+  @Column()
+  type: string;
 }

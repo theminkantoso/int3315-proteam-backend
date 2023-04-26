@@ -16,7 +16,7 @@ import { Ctx, EventPattern, Payload, RmqContext } from '@nestjs/microservices';
 
 @ApiTags('noti')
 @Controller('')
-// @ApiBearerAuth()
+@ApiBearerAuth()
 export class NotiController {
   constructor(private readonly notiService: NotiService,
     private readonly rmqService: RmqService,) {}
@@ -36,6 +36,19 @@ export class NotiController {
     return this.notiService.getHello();
   }
 
+  @ApiOperation({ summary: 'notification of user' })
+  @ApiResponse({ status: 200, description: 'List notification of user' })
+  @UseGuards(AuthGuard('jwt'))
+  @Get('user')
+  async posts(@Req() req: Request) {
+    const acc_id =
+      typeof req['user'].id === 'string'
+        ? parseInt(req['user'].id)
+        : req['user'].id;
+    // const acc_id = 1;
+    return this.notiService.notificationsByAccId(acc_id);
+  }
+
   @EventPattern('posts_created')
   // @UseGuards(JwtAuthGuard)
   async handlePostCreated(@Payload() data: any, @Ctx() context: RmqContext) {
@@ -43,4 +56,17 @@ export class NotiController {
     this.rmqService.getMessage(context);
   }
 
+  @EventPattern('friend_request')
+  // @UseGuards(JwtAuthGuard)
+  async handleFriendRequest(@Payload() data: any, @Ctx() context: RmqContext) {
+    this.notiService.friendRequest(data);
+    this.rmqService.getMessage(context);
+  }
+
+  @EventPattern('accept_friend')
+  // @UseGuards(JwtAuthGuard)
+  async handleAcceptFriend(@Payload() data: any, @Ctx() context: RmqContext) {
+    this.notiService.acceptFriend(data);
+    this.rmqService.getMessage(context);
+  }
 }

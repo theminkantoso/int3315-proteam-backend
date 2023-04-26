@@ -18,12 +18,16 @@ import { User } from '../users/entities/user.entity';
 // import { UpdatePasswordController } from './controllers/update_password.controller';
 import { FriendFollow } from './entities/friend_follow.entity';
 import { FriendController } from './controllers/friend.controller';
-import { JwtStrategy } from 'src/common';
+import { JwtStrategy, RmqModule } from 'src/common';
 import { PassportModule } from '@nestjs/passport';
+import { NOTI_SERVICE } from './constants/services';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User, FriendFollow, Skill, SkillAccount]),
     JwtModule.register({}),
+    RmqModule.register({
+      name: NOTI_SERVICE,
+    }),
     PassportModule],
   controllers: [UserController, FriendController, SkillController, SearchController],
   providers: [UserService, JwtService, FriendFollowService, JwtStrategy, SkillService, SearchService],

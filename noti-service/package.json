@@ -32,6 +32,7 @@
     "@types/passport-jwt": "^3.0.8",
     "amqp-connection-manager": "^4.1.12",
     "amqplib": "^0.10.3",
+    "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "install": "^0.13.0",
     "joi": "^17.9.1",
