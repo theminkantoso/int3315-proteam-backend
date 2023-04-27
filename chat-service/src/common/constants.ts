@@ -9,6 +9,8 @@ export enum OrderDirection {
 
 export type TYPE_ORM_ORDER_DIRECTION = 'ASC' | 'DESC';
 
+export const AUTHORIZATION_TYPE = 'refresh_token';
+
 export enum OrderBy {
   ID = '_id',
   CREATED_AT = 'createdAt',
@@ -101,4 +103,8 @@ export enum HttpStatus {
   SERVICE_UNAVAILABLE = 503,
 }
 
-export const MAX_UPLOAD_FILE_SIZE_IN_BYTE = 20971520; // 20MB = 20971520B
+export const SocketEvents = {
+  CONNECT: 'connect',
+  DISCONNECT: 'disconnect',
+  WEB_APP_USER_LOGIN: 'web_app_user_login',
+};
