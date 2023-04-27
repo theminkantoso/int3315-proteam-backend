@@ -1701,24 +1701,64 @@ INSERT INTO `account` (`account_id`, `name`, `email`, `password`, `gpa`, `school
 -- Cấu trúc bảng cho bảng `conversation`
 --
 
-DROP TABLE IF EXISTS `conversation`;
-CREATE TABLE `conversation` (
-  `conversation_id` int(11) NOT NULL,
-  `conversation_name` varchar(100) DEFAULT NULL,
-  `is_read` int(11) DEFAULT NULL COMMENT '0 chưa đọc, 1 đã đọc'
+DROP TABLE IF EXISTS `conversations`;
+CREATE TABLE `conversations` (
+  `id` int(11) NOT NULL,
+  `is_inbox` int(11) DEFAULT NULL COMMENT '0 group, 1 inbox',
+  `is_conversation_request` int(11) DEFAULT NULL COMMENT '0 connected, 1 request',
+  `title` varchar(100) DEFAULT NULL,
+  `description` varchar(100) DEFAULT NULL,
+  `background` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `conversation_account`
+-- Cấu trúc bảng cho bảng `conversation_users`
 --
 
-DROP TABLE IF EXISTS `conversation_account`;
-CREATE TABLE `conversation_account` (
+DROP TABLE IF EXISTS `conversation_users`;
+CREATE TABLE `conversation_users` (
   `id` int(11) NOT NULL,
-  `account_id` int(11) NOT NULL,
-  `conversation_id` int(11) NOT NULL
+  `user_id` int(11) NOT NULL,
+  `conversation_id` int(11) NOT NULL,
+  `last_message_id` int(11) DEFAULT NULL,
+  `seen_last_message` int(11) DEFAULT NULL COMMENT '0 not seen, 1 seen',
+  `is_admin` int(11) DEFAULT NULL COMMENT '0 normal, 1 admin',
+  `mute` int(11) DEFAULT NULL COMMENT '0 not mute, 1 mute',
+  `block` int(11) DEFAULT NULL COMMENT '0 not block, 1 block'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `messages`
+--
+
+DROP TABLE IF EXISTS `messages`;
+CREATE TABLE `messages` (
+  `id` int(11) NOT NULL,
+  `conversation_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `content` varchar(255) DEFAULT NULL,
+  `file` varchar(255) DEFAULT NULL,
+  `is_remove` int(11) DEFAULT NULL COMMENT '0 not remove, 1 remove',
+  `is_unsent` int(11) DEFAULT NULL COMMENT '0 sent, 1 unsend'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `socket_information`
+--
+
+DROP TABLE IF EXISTS `socket_information`;
+CREATE TABLE `socket_information` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `status` int(11) DEFAULT NULL,
+  `type` enum('socket_id','device_id') DEFAULT NULL,
+  `value` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -1760,22 +1800,6 @@ INSERT INTO `friend_follow` (`id`, `account_id`, `friend_id`, `status`) VALUES
 (1, 1, 2, 1),
 (2, 1, 3, 1),
 (3, 1, 4, 2);
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `message`
---
-
-DROP TABLE IF EXISTS `message`;
-CREATE TABLE `message` (
-  `message_id` int(11) NOT NULL,
-  `content` varchar(255) DEFAULT NULL,
-  `title` varchar(255) DEFAULT NULL,
-  `timestamp` datetime NOT NULL,
-  `account_id` int(11) NOT NULL,
-  `conversation_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -1935,15 +1959,27 @@ ALTER TABLE `account`
   ADD KEY `school` (`school`);
 
 --
--- Chỉ mục cho bảng `conversation`
+-- Chỉ mục cho bảng `conversationd`
 --
-ALTER TABLE `conversation`
-  ADD PRIMARY KEY (`conversation_id`);
+ALTER TABLE `conversations`
+  ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `conversation_account`
+-- Chỉ mục cho bảng `conversation_users`
 --
-ALTER TABLE `conversation_account`
+ALTER TABLE `conversation_users`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Chỉ mục cho bảng `conversation_users`
+--
+ALTER TABLE `messages`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Chỉ mục cho bảng `socket_information`
+--
+ALTER TABLE `socket_information`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -1957,12 +1993,6 @@ ALTER TABLE `files`
 --
 ALTER TABLE `friend_follow`
   ADD PRIMARY KEY (`id`);
-
---
--- Chỉ mục cho bảng `message`
---
-ALTER TABLE `message`
-  ADD PRIMARY KEY (`message_id`);
 
 --
 -- Chỉ mục cho bảng `notification`
@@ -2011,15 +2041,28 @@ ALTER TABLE `account`
   MODIFY `account_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1638;
 
 --
--- AUTO_INCREMENT cho bảng `conversation`
+-- AUTO_INCREMENT cho bảng `conversations`
 --
-ALTER TABLE `conversation`
-  MODIFY `conversation_id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `conversations`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT cho bảng `conversation_account`
+-- AUTO_INCREMENT cho bảng `conversation_users`
 --
-ALTER TABLE `conversation_account`
+ALTER TABLE `conversation_users`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+
+--
+-- AUTO_INCREMENT cho bảng `socket_information`
+--
+ALTER TABLE `socket_information`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT cho bảng `messages`
+--
+ALTER TABLE `messages`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
@@ -2033,12 +2076,6 @@ ALTER TABLE `files`
 --
 ALTER TABLE `friend_follow`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- AUTO_INCREMENT cho bảng `message`
---
-ALTER TABLE `message`
-  MODIFY `message_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT cho bảng `notification`
