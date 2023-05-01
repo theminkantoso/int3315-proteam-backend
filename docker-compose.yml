@@ -60,6 +60,17 @@ services:
       env_file:
         - ./noti-service/.env
 
+    stats_service:
+      build: ./stats-service
+      networks:
+        - mysql
+      ports:
+        - 3006:3006
+      depends_on:
+        - mysql
+      env_file:
+        - ./stats-service/.env
+
     mysql:
         image: mysql:8.0.32
         environment:
