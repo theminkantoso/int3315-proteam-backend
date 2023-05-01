@@ -102,10 +102,3 @@ export enum HttpStatus {
 }
 
 export const MAX_UPLOAD_FILE_SIZE_IN_BYTE = 20971520; // 20MB = 20971520B
-
-export const SocketEvents = {
-  CONNECT: 'connect',
-  DISCONNECT: 'disconnect',
-  WEB_APP_USER_LOGIN: 'web_app_user_login',
-  WEB_APP_SUPPORT_REQUEST_EXPORT_CSV: 'web_app_support_request_export_csv',
-};

@@ -30,6 +30,13 @@ services:
         env_file:
           - ./user-service/.env
 
+    # chat_service:
+    #   build: ./chat-service
+    #   networks:
+    #     - mysql
+    #   ports:
+    #     - 3004:3004
+
     post_service:
       build: ./post-service
       networks:
@@ -40,12 +47,18 @@ services:
         - mysql
       env_file:
         - ./post-service/.env
-    # chat_service:
-    #   build: ./chat-service
-    #   networks:
-    #     - mysql
-    #   ports:
-    #     - 3004:3004
+
+
+    noti_service:
+      build: ./noti-service
+      networks:
+        - mysql
+      ports:
+        - 3005:3005
+      depends_on:
+        - mysql
+      env_file:
+        - ./noti-service/.env
 
     mysql:
         image: mysql:8.0.32
