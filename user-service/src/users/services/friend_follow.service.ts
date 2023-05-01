@@ -112,7 +112,8 @@ export class FriendFollowService {
                 .andWhere('friend_follow.friend_id = :my_acc_id', {my_acc_id: id })
                 .getOne();
 
-            
+            1 4, 1
+            4 2, 1
 
                 if(result || result2) {
                     let final_result = result ? result : result2; 
