@@ -5,6 +5,8 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "../entities/user.entity";
 import { Skill } from "../entities/skill.entity";
 import { JwtService } from '@nestjs/jwt';
+import { School } from "../entities/school.entity";
+import { Major } from "../entities/major.entity";
 
 @Injectable()
 export class StatsService {
@@ -14,30 +16,31 @@ export class StatsService {
     @InjectRepository(SkillAccount)
     private skillAccountRepository: Repository<SkillAccount>,
     @InjectRepository(Skill) private skillRepository: Repository<Skill>,
+    @InjectRepository(School) private schoolRepository: Repository<School>,
+    @InjectRepository(Major) private majorRepository: Repository<Major>,
   ) {}
   
   async getInformation(): Promise<any> {
     try {
-      let schools = await this.userRepository
-      .createQueryBuilder('account')
-      .select('school')
-      .distinct(true)
+
+
+      let schools = await this.schoolRepository.find();
+
+      let majors = await this.majorRepository
+      .createQueryBuilder('major')
+      .innerJoin(School,
+        'school',
+        'major.school_id = school.id')
+      .select(['major.major_name', 'school.id', 'school.school_name'])
       .getRawMany();
 
-      const schools2 = schools.map(item => item.school);
-
-      let majors = await this.userRepository
-      .createQueryBuilder('account')
-      .select('major')
-      .distinct(true)
-      .getRawMany();
-
-      const majors2 = majors.map(item => item.major);
 
       let skills = await this.skillRepository
-      .find()
+      .find();
 
-      let result = {"schools": schools2, "majors": majors2, "skills": skills}
+      // let result = {"schools": schools2, "majors": majors2, "skills": skills}
+
+      let result = {"schools": schools, "majors": majors, "skills": skills};
     return result;
     } catch (err) {
       console.log('Error retrieving information ', err.message ?? err);
@@ -47,5 +50,71 @@ export class StatsService {
       );
     }
   }
-    
+      
+  async getStatsGPA(school: string, major: string, skill: number): Promise<any> {
+    // let query = this.userRepository.createQueryBuilder('account').innerJoin(SkillAccount, 'skill_account', 'skill_account.account_id = account.account_id');
+
+    // query = query.select('COUNT(account.account_id)', 'count');
+    // // query = query.addSelect(
+    // //   `CASE
+    // //       WHEN account.gpa >= 3.6 THEN 'xuat_sac'
+    // //       WHEN account.gpa >= 3.2 THEN 'gioi'
+    // //       WHEN account.gpa >= 2.5 THEN 'kha'
+    // //       WHEN account.gpa >= 2.0 THEN 'trung_binh'
+    // //       ELSE 'yeu'
+    // //   END`,
+    // //   'gpaRange'
+    // // )
+    // if (school !== '') {
+    //   query = query.where("account.school = :school", {school});
+    // }
+
+    // if (major !== '') {
+    //   query = query.where("account.major = :major", {major});
+    // }
+
+    // if (skill !== 0) {
+    //   query = query.where("skill_account.skill_id = :skill", {skill});
+    // }
+
+    // // query = query.groupBy('gpaRange');
+
+    // query = query.where("account.gpa BETWEEN 3.6 and 4.0");
+
+    // // console.log(query.getSql())
+    // return await query.getRawMany();
+
+    let result = {"xuat_sac": await this.queryRangeGPA(school, major, skill, 3.6, 4.0),
+    "gioi": await this.queryRangeGPA(school, major, skill, 3.2, 3.59),
+    "kha": await this.queryRangeGPA(school, major, skill, 2.5, 3.19),
+    "trung binh": await this.queryRangeGPA(school, major, skill, 2.0, 2.49),
+    "yeu": await this.queryRangeGPA(school, major, skill, 0.0, 1.99)}
+    return result;
   }
+
+  async queryRangeGPA(school: string, major: string, skill: number, minGPA: number, maxGPA: number): Promise<any> {
+    var query = this.userRepository.createQueryBuilder('account');
+
+      if (skill != 0) {
+        query.innerJoin(SkillAccount, 'skill_account', 'skill_account.account_id = account.account_id');
+      }
+      query.where("account.gpa BETWEEN :minGPA and :maxGPA", {minGPA, maxGPA});
+      query.select('COUNT(account.account_id)', 'count');
+      if (school != '') {
+        query.andWhere("account.school = :school", {school});
+      }
+  
+      if (major != '') {
+        query.andWhere("account.major = :major", {major});
+      }
+  
+      if (skill != 0) {
+        query.andWhere("skill_account.skill_id = :skill", {skill});
+      }
+  
+      
+  
+      return await query.getRawMany();
+  }
+}
+

@@ -11,12 +11,15 @@ import { JwtStrategy } from 'src/common';
 import { PassportModule } from '@nestjs/passport';
 import { StatsController } from './controllers/stats.controller';
 import { StatsService } from './services/stats.service';
+import { School } from './entities/school.entity';
+import { Major } from './entities/major.entity';
+import { GPAStatsController } from './controllers/gpa_stats.controller';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Skill, SkillAccount]),
+  imports: [TypeOrmModule.forFeature([User, Skill, SkillAccount, School, Major]),
     JwtModule.register({}),
     PassportModule],
-  controllers: [StatsController],
+  controllers: [StatsController, GPAStatsController],
   providers: [StatsService, JwtService, JwtStrategy],
   exports: [StatsModule]
 })
