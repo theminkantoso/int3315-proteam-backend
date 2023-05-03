@@ -16,13 +16,29 @@ import { Major } from './entities/major.entity';
 import { GPAStatsController } from './controllers/gpa_stats.controller';
 import { SchoolStatsController } from './controllers/school.controller';
 import { SkillStatsController } from './controllers/skill.controller';
+import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
+import * as redisStore from 'cache-manager-redis-store';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { ConfigService } from '@nestjs/config';
+import type { RedisClientOptions } from 'redis';
+
 
 @Module({
   imports: [TypeOrmModule.forFeature([User, Skill, SkillAccount, School, Major]),
     JwtModule.register({}),
-    PassportModule],
+    PassportModule,
+    CacheModule.register<RedisClientOptions>({ 
+      store: redisStore, 
+      url: process.env.REDIS_URI,
+      ttl: 300
+    })
+  ],
   controllers: [StatsController, GPAStatsController, SchoolStatsController, SkillStatsController],
-  providers: [StatsService, JwtService, JwtRoleStrategy],
+  providers: [StatsService, 
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: CacheInterceptor,
+    }, JwtService, JwtRoleStrategy],
   exports: [StatsModule]
 })
 export class StatsModule {}

@@ -14,7 +14,6 @@ import { instanceToPlain } from 'class-transformer';
 
 @ApiTags('Stats (ADMIN account required)')
 @Controller('user_stats')
-// @ApiBearerAuth()
 export class StatsController {
     constructor(private readonly statsService: StatsService) {}
 

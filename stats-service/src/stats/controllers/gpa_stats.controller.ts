@@ -49,21 +49,4 @@ export class GPAStatsController {
     skill = skill ? skill : 0;
     return await this.statsService.getStatsGPA(school, major, skill);
   }
-
-  // @ApiOperation({ summary: 'Stats skill' })
-  // @ApiResponse({ status: 200, description: 'count number of students that have skills in different category' })
-  // @ApiBearerAuth()
-  // @UseGuards(AuthGuard('jwt'))
-  // @ApiQuery({ name: 'school', description: "school filter, optional", required: false })
-  // @ApiQuery({ name: 'major', description: "major filter, optional, but should be aligned with school (ex UEB AND major CNTT -> khong phu hop)", required: false})
-  // @ApiQuery({ name: 'hoc_luc', description: "gpa filter, optional, 5 choices: xuat_sac, gioi, kha, trung_binh, yeu", required: false })
-  // @Get()
-  // async GetStatsSkill(@Query('school') school?: string,
-  //                     @Query('major') major?: string,
-  //                     @Query('hoc_luc') hoc_luc?: string): Promise<any> {
-  //   school = school ? school : '';
-  //   major = major ? major : '';
-  //   hoc_luc = hoc_luc ? hoc_luc : '';
-  //   return await this.statsService.getStatsSkill(school, major, hoc_luc);
-  // }
 }
