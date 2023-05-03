@@ -12,22 +12,23 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { instanceToPlain } from 'class-transformer';
 import { StatsQueryDto } from '../dtos/stats_query.dto';
+import { SkillStatsDto } from '../dtos/skill_stats.dto';
 
 @ApiTags('Stats (ADMIN account required)')
-@Controller('gpa')
+@Controller('skill')
 // @ApiBearerAuth()
-export class GPAStatsController {
+export class SkillStatsController {
     constructor(private readonly statsService: StatsService) {}
 
-  @ApiOperation({ summary: 'Stats GPA' })
-  @ApiResponse({ status: 200, description: 'count number of students that GPA in different ranges (gioi, kha, v.v) in different category' })
+  @ApiOperation({ summary: 'Stats skill' })
+  @ApiResponse({ status: 200, description: 'count number of students that have skills in different category' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   @Post()
-  async GetStatsGPA(@Req() req: Request, @Body() filters: StatsQueryDto): Promise<any> {
+  async GetStatsSkill(@Req() req: Request, @Body() filters: SkillStatsDto): Promise<any> {
     let school = filters.school ? filters.school : '';
     let major = filters.major ? filters.major : '';
-    let skill = filters.skill ? filters.skill : 0;
-    return await this.statsService.getStatsGPA(school, major, skill);
+    let hoc_luc = filters.hoc_luc ? filters.hoc_luc : '';
+    return await this.statsService.getStatsSkill(school, major, hoc_luc);
   }
 }

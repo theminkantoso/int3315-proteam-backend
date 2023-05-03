@@ -10,6 +10,11 @@
 //     context: ExecutionContext,
 //   ): boolean | Promise<boolean> | Observable<boolean> {
 //     const request = context.switchToHttp().getRequest();
-//     return validateRequest(request);
+//     const token = request.headers.authorization.split(' ')[1];
+//     const decodedToken = this.jwtService.decode(token);
+//     const userRole = decodedToken['role'];
+//     const requiredRoles = this.reflector.get<string[]>('roles', context.getHandler());
+
+//     return requiredRoles.includes(userRole);
 //   }
 // }

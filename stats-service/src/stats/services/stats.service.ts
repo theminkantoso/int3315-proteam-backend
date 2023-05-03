@@ -95,26 +95,79 @@ export class StatsService {
   async queryRangeGPA(school: string, major: string, skill: number, minGPA: number, maxGPA: number): Promise<any> {
     var query = this.userRepository.createQueryBuilder('account');
 
-      if (skill != 0) {
-        query.innerJoin(SkillAccount, 'skill_account', 'skill_account.account_id = account.account_id');
-      }
-      query.where("account.gpa BETWEEN :minGPA and :maxGPA", {minGPA, maxGPA});
-      query.select('COUNT(account.account_id)', 'count');
-      if (school != '') {
-        query.andWhere("account.school = :school", {school});
-      }
+    if (skill != 0) {
+      query.innerJoin(SkillAccount, 'skill_account', 'skill_account.account_id = account.account_id');
+    }
+    query.where("account.gpa BETWEEN :minGPA and :maxGPA", {minGPA, maxGPA});
+    query.select('COUNT(account.account_id)', 'count');
+    if (school != '') {
+      query.andWhere("account.school = :school", {school});
+    }
+
+    if (major != '') {
+      query.andWhere("account.major = :major", {major});
+    }
+
+    if (skill != 0) {
+      query.andWhere("skill_account.skill_id = :skill", {skill});
+    }
+
+    return await query.getRawMany();
+  }
+
+  async getStatsSchool(school: string): Promise<any> {
+    var query = this.userRepository.createQueryBuilder('account');
   
-      if (major != '') {
-        query.andWhere("account.major = :major", {major});
+    if (school != '') {
+      query.select('account.major');
+      query.addSelect('COUNT(account.account_id)', 'count');
+      query.andWhere("account.school = :school", {school});
+      query.groupBy('major');
+    }
+    else {
+      query.select('account.school');
+      query.addSelect('COUNT(account.account_id)', 'count');
+      query.groupBy('school');
+    }
+
+    return await query.getRawMany();
+  }
+
+  async getStatsSkill(school: string, major: string, hoc_luc: string): Promise<any> {
+    var query = this.userRepository.createQueryBuilder('account');
+    query.innerJoin(SkillAccount, 'skill_account', 'skill_account.account_id = account.account_id');
+    query.innerJoin(Skill, 'skill', 'skill_account.skill_id = skill.skill_id');
+    query.select('skill.skill_name');
+    query.addSelect('COUNT(account.account_id)', 'count');
+  
+    if (school != '') {
+      query.andWhere("account.school = :school", {school});
+    }
+
+    if (major != '') {
+      query.andWhere("account.major = :major", {major});
+    }
+
+    if (hoc_luc != '') {
+      if (hoc_luc == 'xuat_sac') {
+        query.andWhere("account.gpa BETWEEN 3.6 and 4.0");
       }
-  
-      if (skill != 0) {
-        query.andWhere("skill_account.skill_id = :skill", {skill});
+      else if (hoc_luc == 'gioi') {
+        query.andWhere("account.gpa BETWEEN 3.2 and 3.59");
       }
-  
-      
-  
-      return await query.getRawMany();
+      else if (hoc_luc == 'kha') {
+        query.andWhere("account.gpa BETWEEN 2.5 and 3.19");
+      }
+      else if (hoc_luc == 'trung_binh') {
+        query.andWhere("account.gpa BETWEEN 2.0 and 2.49");
+      }
+      else if (hoc_luc == 'yeu') {
+        query.andWhere("account.gpa BETWEEN 0.0 and 1.99");
+      }
+      else {}
+    }
+    query.groupBy('skill.skill_id');
+    return await query.getRawMany();
   }
 }
 

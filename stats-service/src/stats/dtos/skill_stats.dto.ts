@@ -7,7 +7,7 @@ import {
   } from 'class-validator';
   import { ApiProperty } from '@nestjs/swagger';
 
-export class StatsQueryDto {
+export class SkillStatsDto {
 
     @IsOptional()
     @IsString()
@@ -20,7 +20,7 @@ export class StatsQueryDto {
     major: string;
 
     @IsOptional()
-    @IsNumber()
-    @ApiProperty({description: "skill filter, optional", required: false })
-    skill: number;
+    @IsString()
+    @ApiProperty({description: "gpa filter, optional, 5 choices: xuat_sac, gioi, kha, trung_binh, yeu", required: false })
+    hoc_luc: string;
 }

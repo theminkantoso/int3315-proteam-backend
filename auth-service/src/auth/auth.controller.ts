@@ -39,6 +39,7 @@ import {
 } from './dto/requests/update-profile.dto';
 import { User } from './entities/user.entity';
 import { AuthService, usersAttributes } from './services/auth.service';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller({
   path: '',
@@ -49,6 +50,7 @@ export class AuthController {
     private readonly databaseService: DatabaseService,
   ) {}
 
+  @ApiTags('admin account: admin@gmail.com, 123456')
   @Post('login')
   @UsePipes(new JoiValidationPipe(LoginSchema))
   async login(@Body(new TrimBodyPipe()) data: LoginDto) {

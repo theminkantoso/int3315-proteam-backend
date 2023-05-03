@@ -11,19 +11,22 @@ import {
   } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { instanceToPlain } from 'class-transformer';
+import { StatsQueryDto } from '../dtos/stats_query.dto';
+import { SchoolStatsDto } from '../dtos/school_stats.dto';
 
 @ApiTags('Stats (ADMIN account required)')
-@Controller('user_stats')
+@Controller('school')
 // @ApiBearerAuth()
-export class StatsController {
+export class SchoolStatsController {
     constructor(private readonly statsService: StatsService) {}
 
-  @ApiOperation({ summary: 'Get all information for latter fetching' })
-  @ApiResponse({ status: 200, description: 'Schools, majors, skills' })
+  @ApiOperation({ summary: 'Stats school' })
+  @ApiResponse({ status: 200, description: 'count number of students studying in each schools or majors' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
-  @Get()
-  async GetMe(): Promise<any> {
-    return await this.statsService.getInformation();
+  @Post()
+  async GetStatsSchool(@Req() req: Request, @Body() filters: SchoolStatsDto): Promise<any> {
+    let school = filters.school ? filters.school : '';
+    return await this.statsService.getStatsSchool(school);
   }
 }
