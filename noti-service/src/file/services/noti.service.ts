@@ -33,6 +33,47 @@ export class NotiService {
           return list;
       }
     }
+
+    async readNoti(user_id: number, id: number): Promise<any> {
+      var user = await this.userRepository.findOne({
+        where: { account_id: user_id },
+      });
+      if (!user) {
+        throw new HttpException(
+          `User with id ${user_id} not found.`,
+          HttpStatus.NOT_FOUND,
+        );
+      } else {
+          var noti = await this.notiRepository.createQueryBuilder()
+          .where('noti_id = :id AND account_id = :user_id', {
+            id: id,
+            user_id: user_id
+          })
+          .getOne();
+          if(!noti) {
+            throw new HttpException(
+              `Notification with id ${id} not found.`,
+              HttpStatus.NOT_FOUND,
+            );
+          } else {
+            const notiUpdate: NotiDto = {
+              account_id: noti.account_id,
+              description: noti.description,
+              is_read: 1,
+              create_time: noti.create_time,
+              type: noti.type
+            }
+            const updated = { ...noti, ...notiUpdate };
+            const info = await this.notiRepository.save(updated);
+            if (info) {
+              return notiUpdate;
+            } else {
+              return null;
+            }
+          }
+
+      }
+    }
     
     async createPosts(data: any) {
       // this.logger.log('Posts...', data);
@@ -59,7 +100,7 @@ export class NotiService {
       // this.logger.log(friendFollowId);
       // this.logger.log('Friend request...', req);
       // this.logger.log('Account...', user)
-      const noti : NotiDto = {account_id: req.friend_id, description: user.name + Constant.FRIEND_REQUEST, is_read: 0, create_time: new Date(), type: Constant.FRIEND_REQUEST_KEY + friendFollowId}
+      const noti : NotiDto = {account_id: req.friend_id, description: user.name + Constant.FRIEND_REQUEST, is_read: 0, create_time: new Date(), type: Constant.FRIEND_REQUEST_KEY + req.account_id}
       // this.logger.log(noti.description);
       await this.notiRepository.insert(noti);
       

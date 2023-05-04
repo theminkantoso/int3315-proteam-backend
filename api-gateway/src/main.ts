@@ -73,6 +73,14 @@ async function bootstrap() {
   );
 
   app.use(
+    '/noti',
+    createProxyMiddleware({
+      target: NOTI_SERVICE_URL,
+      changeOrigin: true,
+    }),
+  );
+
+  app.use(
     '/stats',
     createProxyMiddleware({
       target: STATS_SERVICE_URL,
