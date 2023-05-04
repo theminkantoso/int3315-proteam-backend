@@ -1790,7 +1790,7 @@ CREATE TABLE `notification` (
   `description` varchar(255) DEFAULT NULL,
   `is_read` int(11) DEFAULT 0 COMMENT '0 chưa đọc, 1 đã đọc',
   `create_time` datetime NOT NULL,
-  `description` varchar(100) DEFAULT NULL
+  `type` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------

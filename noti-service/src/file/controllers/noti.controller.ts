@@ -49,6 +49,21 @@ export class NotiController {
     return this.notiService.notificationsByAccId(acc_id);
   }
 
+  @ApiOperation({ summary: 'read notification' })
+  @ApiResponse({ status: 200, description: 'notification' })
+  @UseGuards(AuthGuard('jwt'))
+  @Patch('read/:id')
+  async readNoti(
+    @Req() req: Request, 
+    @Query('id', ParseIntPipe) id?: number) {
+    const acc_id =
+      typeof req['user'].id === 'string'
+        ? parseInt(req['user'].id)
+        : req['user'].id;
+    // const acc_id = 1;
+    return this.notiService.readNoti(acc_id, id);
+  }
+
   @EventPattern('posts_created')
   // @UseGuards(JwtAuthGuard)
   async handlePostCreated(@Payload() data: any, @Ctx() context: RmqContext) {
