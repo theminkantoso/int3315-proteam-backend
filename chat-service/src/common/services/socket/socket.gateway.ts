@@ -7,6 +7,7 @@ import {
 } from '@nestjs/websockets';
 import { ConfigService } from '@nestjs/config';
 import { Server, Socket } from 'socket.io';
+
 @WebSocketGateway({
   allowEIO3: true,
   cors: {

@@ -28,12 +28,6 @@ export class SocketInformation implements ISocketInformation {
   @Column({ name: 'value', length: 255 })
   value: string;
 
-  @CreateDateColumn({ name: 'created_at', type: 'timestamp', nullable: true })
-  created_at: Date;
-
-  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp', nullable: true })
-  updated_at: Date;
-
   @ManyToOne(() => User, (user) => user.messages)
   @JoinColumn({ name: 'user_id' })
   user?: User;

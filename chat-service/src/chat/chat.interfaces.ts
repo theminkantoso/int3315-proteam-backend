@@ -13,6 +13,7 @@ export interface IConversations {
   is_inbox: boolean;
   is_conversation_request: boolean;
   title: string | null;
+  last_message_id: number | null;
   description: string | null;
   background: string | null;
 }
@@ -21,7 +22,6 @@ export interface IConversationUsers {
   id: number;
   user_id: number;
   conversation_id: number;
-  last_message_id: number | null;
   is_admin: boolean;
   mute: boolean;
   seen_last_message: boolean;

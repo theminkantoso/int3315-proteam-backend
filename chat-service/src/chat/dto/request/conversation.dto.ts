@@ -7,6 +7,7 @@ export const ConversationSchema = Joi.object({
     .required()
     .label('is conversation request'),
   title: Joi.string().max(TEXTAREA_MAX_LENGTH).allow(null).label('title'),
+  last_message_id: Joi.number().required().allow(null).label('last message id'),
   description: Joi.string()
     .max(TEXTAREA_MAX_LENGTH)
     .allow(null)
@@ -19,6 +20,7 @@ export const ConversationSchema = Joi.object({
 });
 export class ConversationDto {
   readonly is_inbox: boolean;
+  readonly last_message_id: number | null;
   readonly is_conversation_request: boolean;
   readonly title: string | null;
   readonly description: string | null;

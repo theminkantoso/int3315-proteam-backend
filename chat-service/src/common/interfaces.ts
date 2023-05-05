@@ -1,5 +1,5 @@
 export interface ISocketWepAppLogin {
-  senderId: string;
+  senderId: number;
   senderEmail: string;
 }
 

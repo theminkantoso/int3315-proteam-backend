@@ -19,12 +19,14 @@ import {
 import { DEFAULT_LIMIT_MESSAGE_QUERY } from '../chat.constants';
 import { SocketInformation } from '../entities/socket_information.entity';
 import { SocketInformationDto } from '../dto/request/socket-information.dto';
+import { classToPlain, plainToClass } from 'class-transformer';
 
 export const conversationAttributes: (keyof Conversation)[] = [
   'id',
   'is_inbox',
   'is_conversation_request',
   'title',
+  'last_message_id',
   'background',
   'description',
 ];
@@ -33,7 +35,6 @@ export const conversationUserAttributes: (keyof ConversationUser)[] = [
   'id',
   'user_id',
   'conversation_id',
-  'last_message_id',
   'is_admin',
   'mute',
   'seen_last_message',
@@ -55,6 +56,13 @@ export const socketInformationAttributes: (keyof SocketInformation)[] = [
   'type',
   'value',
   'status',
+];
+
+export const userAttributes: (keyof User)[] = [
+  'account_id',
+  'avatar',
+  'name',
+  'email',
 ];
 
 @Injectable()
@@ -316,6 +324,50 @@ export class ChatService {
   public async deleteSocketInformation(id: number) {
     try {
       await this.socketInformationRepository.delete(id);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  public async getAllConversationUserByUserId(id: number) {
+    try {
+      return await this.conversationUserRepository.find({
+        select: conversationUserAttributes,
+        where: { user_id: id },
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  public async getAllConversationByUserId(id: number) {
+    try {
+      const userInfo = await this.userRepository
+        .createQueryBuilder('account')
+        .innerJoinAndSelect('account.conversations', 'conversations')
+        .leftJoinAndSelect('conversations.users', 'userInConversation')
+        .leftJoinAndSelect('conversations.messages', 'messages')
+        .innerJoinAndMapOne(
+          'conversations.conversationUser',
+          'conversations.conversationUser',
+          'conversationUser',
+          'conversationUser.conversation_id = conversations.id',
+        )
+        .where('account.account_id = :id', { id })
+        .orderBy('messages.id', 'DESC')
+        .getOne();
+
+      const conversations = userInfo.conversations;
+
+      return conversations.map((item) => {
+        return {
+          ...item,
+          users: item.users?.map((user) => {
+            delete user.password;
+            return user;
+          }),
+        };
+      });
     } catch (error) {
       throw error;
     }

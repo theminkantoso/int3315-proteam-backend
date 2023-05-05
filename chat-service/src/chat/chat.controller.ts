@@ -75,6 +75,31 @@ export class ChatController {
     }
   }
 
+  @Get('/conversation/get-by-user-id/:id')
+  @UseGuards(JwtGuard)
+  async getListConversationsByUserId(
+    @Request() req,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    try {
+      if (id !== req.loginUser.account_id) {
+        const message = 'permission denied';
+        return new ErrorResponse(HttpStatus.FORBIDDEN, message, []);
+      }
+
+      const user = await this.userService.getUserById(id);
+      if (!user) {
+        const message = 'user not found';
+        return new ErrorResponse(HttpStatus.NOT_FOUND, message, []);
+      }
+
+      const result = await this.chatService.getAllConversationByUserId(id);
+      return new SuccessResponse({ items: result, totalItems: result.length });
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
   @Get('/conversation/:id')
   @UseGuards(JwtGuard)
   async getConversationDetail(

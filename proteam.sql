@@ -1705,6 +1705,7 @@ DROP TABLE IF EXISTS `conversations`;
 CREATE TABLE `conversations` (
   `id` int(11) NOT NULL,
   `is_inbox` int(11) DEFAULT NULL COMMENT '0 group, 1 inbox',
+  `last_message_id` int(11) DEFAULT NULL,
   `is_conversation_request` int(11) DEFAULT NULL COMMENT '0 connected, 1 request',
   `title` varchar(100) DEFAULT NULL,
   `description` varchar(100) DEFAULT NULL,
@@ -1722,7 +1723,6 @@ CREATE TABLE `conversation_users` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `conversation_id` int(11) NOT NULL,
-  `last_message_id` int(11) DEFAULT NULL,
   `seen_last_message` int(11) DEFAULT NULL COMMENT '0 not seen, 1 seen',
   `is_admin` int(11) DEFAULT NULL COMMENT '0 normal, 1 admin',
   `mute` int(11) DEFAULT NULL COMMENT '0 not mute, 1 mute',

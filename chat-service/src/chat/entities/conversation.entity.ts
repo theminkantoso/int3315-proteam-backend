@@ -23,6 +23,9 @@ export class Conversation extends BaseEntity {
   is_conversation_request: boolean;
 
   @Column()
+  last_message_id: number;
+
+  @Column()
   title: string;
 
   @Column()
@@ -40,9 +43,9 @@ export class Conversation extends BaseEntity {
   )
   conversationUser?: ConversationUser[];
 
-  @ManyToMany(() => User, (users) => users.conversations)
+  @ManyToMany(() => User, (user) => user.conversations)
   @JoinTable({
-    name: 'user_conversation',
+    name: 'conversation_users',
     joinColumn: { name: 'conversation_id', referencedColumnName: 'id' },
     inverseJoinColumn: { name: 'user_id' },
   })

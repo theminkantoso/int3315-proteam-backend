@@ -107,4 +107,5 @@ export const SocketEvents = {
   CONNECT: 'connect',
   DISCONNECT: 'disconnect',
   WEB_APP_USER_LOGIN: 'web_app_user_login',
+  WEB_APP_USER_SENT_MESSAGE: 'web_app_user_sent_message',
 };

@@ -1,8 +1,7 @@
-import { User } from '../entities/user.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
-import { ConfigService } from '@nestjs/config';
+import { User } from '../entities/user.entity';
 
 export const usersAttributes: (keyof User)[] = [
   'email',
@@ -20,6 +19,7 @@ export const usersAttributes: (keyof User)[] = [
 export class UserService {
   constructor(
     @InjectEntityManager()
+    private readonly dbManager: EntityManager,
     @InjectRepository(User)
     private userRepository: Repository<User>,
   ) {}
