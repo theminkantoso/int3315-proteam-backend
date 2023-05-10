@@ -1790,7 +1790,23 @@ CREATE TABLE `notification` (
   `description` varchar(255) DEFAULT NULL,
   `is_read` int(11) DEFAULT 0 COMMENT '0 chưa đọc, 1 đã đọc',
   `create_time` datetime NOT NULL,
-  `type` varchar(100) DEFAULT NULL
+  `type` varchar(100) DEFAULT NULL,
+  `notification_token_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `notification_tokens`
+--
+
+DROP TABLE IF EXISTS `notification_tokens`;
+CREATE TABLE `notification_tokens` (
+  `id` int(11) NOT NULL,
+  `account_id` int(11) NOT NULL,
+  `device_type` varchar(255) DEFAULT NULL,
+  `notification_token` varchar(255) DEFAULT NULL,
+  `status` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -1972,6 +1988,12 @@ ALTER TABLE `notification`
   ADD PRIMARY KEY (`noti_id`);
 
 --
+-- Chỉ mục cho bảng `notification_tokens`
+--
+ALTER TABLE `notification_tokens`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Chỉ mục cho bảng `post`
 --
 ALTER TABLE `post`
@@ -2046,6 +2068,12 @@ ALTER TABLE `message`
 --
 ALTER TABLE `notification`
   MODIFY `noti_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT cho bảng `notification_tokens`
+--
+ALTER TABLE `notification_tokens`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT cho bảng `post`

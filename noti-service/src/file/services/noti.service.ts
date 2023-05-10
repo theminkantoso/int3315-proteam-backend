@@ -5,11 +5,31 @@ import { Repository } from 'typeorm';
 import { Noti } from '../entities/noti.entities';
 import { User } from '../entities/user.entities';
 import { Constant } from '../constants/message';
+import * as firebase from 'firebase-admin';
+import * as path from 'path';
+import { NotiToken } from '../entities/noti_token.entities';
+import { NotiFirebaseDto, UpdateNotiFirebaseDto } from '../dtos';
+// import serviceAccount from './firebase_account.json';
+
+
+// var serviceAccount = require('./firebase_account.json');
+
+// var serviceAccount = require('firebase_account.json');
+
+firebase.initializeApp({
+  credential: firebase.credential.cert({
+    "projectId": process.env.FIREBASE_PROJECT_ID,
+    "privateKey": process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+    "clientEmail": process.env.FIREBASE_CLIENT_EMAIL,
+  }),
+  databaseURL: "https://proteam.firebaseio.com",
+});
 
 @Injectable()
 export class NotiService {
     constructor(@InjectRepository(Noti) private notiRepository: Repository<Noti>,
-    @InjectRepository(User) private userRepository: Repository<User>) {}
+    @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(NotiToken) private readonly notificationTokenRepo: Repository<NotiToken>) {}
 
     private readonly logger = new Logger(NotiService.name);
     getHello(): string {
@@ -100,10 +120,10 @@ export class NotiService {
       // this.logger.log(friendFollowId);
       // this.logger.log('Friend request...', req);
       // this.logger.log('Account...', user)
-      const noti : NotiDto = {account_id: req.friend_id, description: user.name + Constant.FRIEND_REQUEST, is_read: 0, create_time: new Date(), type: Constant.FRIEND_REQUEST_KEY + req.account_id}
+      // const noti : NotiDto = {account_id: req.friend_id, description: user.name + Constant.FRIEND_REQUEST, is_read: 0, create_time: new Date(), type: Constant.FRIEND_REQUEST_KEY + req.account_id}
       // this.logger.log(noti.description);
-      await this.notiRepository.insert(noti);
-      
+      // await this.notiRepository.insert(noti);
+      this.sendPush(req.friend_id, Constant.FRIEND_REQUEST_KEY, user.name + Constant.FRIEND_REQUEST, Constant.FRIEND_REQUEST_KEY + ":" + req.account_id);
     }
 
     async acceptFriend(data: any) {
@@ -112,9 +132,126 @@ export class NotiService {
       const user = data["user"];
       // this.logger.log('Friend request...', req);
       // this.logger.log('Account...', user)
-      const noti : NotiDto = {account_id: req.friend_id, description: user.name + Constant.ACCEPT_FRIEND, is_read: 0, create_time: new Date(), type: Constant.ACCEPT_FRIEND_KEY + req.id}
-      this.logger.log(noti.description);
-      await this.notiRepository.insert(noti);
-      
+      // const noti : NotiDto = {account_id: req.friend_id, description: user.name + Constant.ACCEPT_FRIEND, is_read: 0, create_time: new Date(), type: Constant.ACCEPT_FRIEND_KEY + req.id}
+      // this.logger.log(noti.description);
+      // await this.notiRepository.insert(noti);
+      this.sendPush(req.account_id, Constant.ACCEPT_FRIEND_KEY, user.name + Constant.ACCEPT_FRIEND, Constant.ACCEPT_FRIEND_KEY + ":" + req.id);
     }
+
+    acceptPushNotification = async (
+      user_id: number,
+      notification_dto: NotiFirebaseDto,
+    ): Promise<NotiToken> => {
+      try {
+        var user = await this.userRepository.findOne({
+          where: { account_id: user_id },
+        });
+        if (user) {
+          await this.notificationTokenRepo.update(
+            { account_id: user_id },
+            {
+              status: 'INACTIVE',
+            },
+          );
+          // save to db
+          const notification_token = await this.notificationTokenRepo.save({
+            account_id: user_id,
+            device_type: notification_dto.device_type,
+            notification_token: notification_dto.notification_token,
+            status: 'ACTIVE',
+          });
+          return notification_token;
+        }
+        else {
+          throw new HttpException(
+            `User with id ${user_id} not found.`,
+            HttpStatus.NOT_FOUND,
+          );
+        }
+      } catch(error) {
+        return error;
+      }
+    };
+  
+    disablePushNotification = async (
+      user_id: number,
+      update_dto: UpdateNotiFirebaseDto,
+    ): Promise<void> => {
+      try {
+        var user = await this.userRepository.findOne({
+          where: { account_id: user_id },
+        });
+        if (user) {
+          await this.notificationTokenRepo.update(
+            { account_id: user_id, device_type: update_dto.device_type },
+            {
+              status: 'INACTIVE',
+            },
+          );
+        } else {
+          throw new HttpException(
+            `User with id ${user_id} not found.`,
+            HttpStatus.NOT_FOUND,
+          );
+        }
+      } catch (error) {
+        return error;
+      }
+    };
+  
+    getNotifications = async (user_id: number): Promise<any> => {
+      var user = await this.userRepository.findOne({
+        where: { account_id: user_id },
+      });
+      if (user) {
+        return await this.notiRepository.createQueryBuilder()
+        .where('account_id = :id ', {
+          id: user_id
+        })
+      } else {
+        throw new HttpException(
+          `User with id ${user_id} not found.`,
+          HttpStatus.NOT_FOUND,
+        );
+      }
+    };
+  
+    sendPush = async (user_id: number, title: string, body: string, type: string): Promise<void> => {try {
+      const notification = await this.notificationTokenRepo.findOne({
+        where: { account_id: user_id, status: 'ACTIVE' },
+      });
+      if (notification) {
+        await this.notiRepository.save({
+          account_id: user_id, 
+          description: body, 
+          is_read: 0, 
+          create_time: new Date(), 
+          type: type,
+          notification_token_id: notification.id
+        });
+
+        await firebase
+          .messaging()
+          .send({
+            notification: { title, body },
+            token: notification.notification_token,
+            android: { priority: 'high' },
+          })
+          .catch((error: any) => {
+            console.error(error);
+          });
+      } else {
+        await this.notiRepository.save({
+          account_id: user_id, 
+          description: body, 
+          is_read: 0, 
+          create_time: new Date(), 
+          type: type
+        });
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+
 }

@@ -9,8 +9,9 @@ import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import { Noti } from './entities/noti.entities';
 import { User } from './entities/user.entities';
-import { Post } from './entities/post.entity';
+import { Post } from './entities/post.entities';
 import { FriendFollow } from './entities/friend_follow.entities';
+import { NotiToken } from './entities/noti_token.entities';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { FriendFollow } from './entities/friend_follow.entities';
         RABBIT_MQ_NOTI_QUEUE: Joi.string().required(),
       }),
     }),
-    TypeOrmModule.forFeature([Noti, Post, User, FriendFollow]),
+    TypeOrmModule.forFeature([Noti, Post, User, FriendFollow, NotiToken]),
     JwtModule.register({}),
     RmqModule,
   ],

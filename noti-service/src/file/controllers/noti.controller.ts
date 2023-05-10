@@ -1,5 +1,5 @@
 import { NotiService } from '../services/noti.service';
-import { Body, Controller, Get, Param, Patch, Post, Query, Req, UseGuards, ParseIntPipe, Request } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query, Req, UseGuards, ParseIntPipe, Request, Put } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBasicAuth,
@@ -12,6 +12,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { RmqService } from 'src/common';
 import { Ctx, EventPattern, Payload, RmqContext } from '@nestjs/microservices';
+import { NotiDto, NotiFirebaseDto, UpdateNotiFirebaseDto } from '../dtos';
 
 
 @ApiTags('noti')
@@ -83,5 +84,33 @@ export class NotiController {
   async handleAcceptFriend(@Payload() data: any, @Ctx() context: RmqContext) {
     this.notiService.acceptFriend(data);
     this.rmqService.getMessage(context);
+  }
+
+  @Put('push/enable')
+  @ApiResponse({ status: 200, description: 'notification' })
+  @UseGuards(AuthGuard('jwt'))
+  async enablePush(
+    @Req() req: Request, 
+    @Body() update_dto: NotiFirebaseDto
+  ) {
+    const acc_id =
+      typeof req['user'].id === 'string'
+        ? parseInt(req['user'].id)
+        : req['user'].id;
+    return await this.notiService.acceptPushNotification(acc_id, update_dto)  
+  }
+
+  @Put('push/disable')
+  @ApiResponse({ status: 200, description: 'notification' })
+  @UseGuards(AuthGuard('jwt'))
+  async disablePush(
+    @Req() req: Request, 
+    @Body() update_dto: UpdateNotiFirebaseDto,
+  ) {
+    const acc_id =
+      typeof req['user'].id === 'string'
+        ? parseInt(req['user'].id)
+        : req['user'].id;
+    return await this.notiService.disablePushNotification(acc_id, update_dto)
   }
 }
