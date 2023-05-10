@@ -19,4 +19,7 @@ export class Noti extends BaseEntity {
 
   @Column()
   type: string;
+
+  @Column()
+  notification_token_id: number
 }
