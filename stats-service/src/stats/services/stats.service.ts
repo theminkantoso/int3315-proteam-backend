@@ -98,7 +98,8 @@ export class StatsService {
     if (skill != 0) {
       query.innerJoin(SkillAccount, 'skill_account', 'skill_account.account_id = account.account_id');
     }
-    query.where("account.gpa BETWEEN :minGPA and :maxGPA", {minGPA, maxGPA});
+    query.where("account.role = 0");
+    query.andWhere("account.gpa BETWEEN :minGPA and :maxGPA", {minGPA, maxGPA});
     query.select('COUNT(account.account_id)', 'count');
     if (school != '') {
       query.andWhere("account.school = :school", {school});
@@ -121,11 +122,13 @@ export class StatsService {
     if (school != '') {
       query.select('account.major');
       query.addSelect('COUNT(account.account_id)', 'count');
+      query.where("account.role = 0");
       query.andWhere("account.school = :school", {school});
       query.groupBy('major');
     }
     else {
       query.select('account.school');
+      query.where("account.role = 0");
       query.addSelect('COUNT(account.account_id)', 'count');
       query.groupBy('school');
     }
@@ -166,6 +169,7 @@ export class StatsService {
       }
       else {}
     }
+    query.where("account.role = 0");
     query.groupBy('skill.skill_id');
     return await query.getRawMany();
   }
