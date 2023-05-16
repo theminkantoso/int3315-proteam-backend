@@ -306,6 +306,8 @@ CREATE TABLE `notification` (
   `description` varchar(255) DEFAULT NULL,
   `is_read` int DEFAULT '0' COMMENT '0 chưa đọc, 1 đã đọc',
   `create_time` datetime NOT NULL,
+  `type` varchar(100) DEFAULT NULL,
+  `notification_token_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`noti_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -322,6 +324,26 @@ UNLOCK TABLES;
 --
 -- Table structure for table `post`
 --
+
+DROP TABLE IF EXISTS `notification_tokens`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `notification_tokens` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `account_id` int(11) NOT NULL,
+  `device_type` varchar(255) DEFAULT NULL,
+  `notification_token` varchar(255) DEFAULT NULL,
+  `status` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+LOCK TABLES `notification_tokens` WRITE;
+/*!40000 ALTER TABLE `notification` DISABLE KEYS */;
+/*!40000 ALTER TABLE `notification` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
 
 DROP TABLE IF EXISTS `post`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
