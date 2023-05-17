@@ -32,7 +32,7 @@ export class SearchService {
               }
             let posts = await this.postRepository
                 .createQueryBuilder('post')
-                .select("post.*, account.name, account.avatar")
+                .select("post.*, account.name, account.avatar, account.role")
                 .from(User, "account")
                 .where('post.account_id = account.account_id')
              if(user.role === 0 ) {
