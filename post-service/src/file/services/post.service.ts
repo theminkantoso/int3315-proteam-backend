@@ -45,7 +45,7 @@ export class PostService {
       }
       const result = await this.postRepository
         .createQueryBuilder('post')
-        .select('post.*, account.name, account.avatar')
+        .select('post.*, account.name, account.avatar, account.role')
         .from(User, 'account')
         .where('post.account_id = account.account_id');
       if (user.role === 0) {
@@ -76,7 +76,7 @@ export class PostService {
       }
       const post = await this.postRepository
         .createQueryBuilder('post')
-        .select('post.*, account.name, account.avatar')
+        .select('post.*, account.name, account.avatar, account.role')
         .from(User, 'account')
         .where('post.account_id = account.account_id')
         .andWhere('post.account_id = :id', { id: id })
@@ -109,7 +109,7 @@ export class PostService {
       // .getOne();
       const result = await this.postRepository
         .createQueryBuilder('post')
-        .select('post.*, account.name, account.avatar')
+        .select('post.*, account.name, account.avatar, account.role')
         .from(User, 'account')
         .where('post.account_id = account.account_id')
         .andWhere('post_id = :post_id', { post_id: post_id });
@@ -134,6 +134,7 @@ export class PostService {
           max_gpa: post.max_gpa,
           name: post.name,
           avatar: post.avatar,
+          role: post.role,
           skills: [],
         };
         const skills = await this.skillRepository
@@ -364,7 +365,7 @@ export class PostService {
       }
       const result = await this.postRepository
         .createQueryBuilder('post')
-        .select('post.*, account.name, account.avatar')
+        .select('post.*, account.name, account.avatar, account.role')
         .from(User, 'account')
         .where('post.account_id = account.account_id')
         .andWhere('post.account_id = :id', { id: user_id });
