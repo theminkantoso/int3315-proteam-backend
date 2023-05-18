@@ -80,6 +80,14 @@ async function bootstrap() {
     }),
   );
 
+  app.use(
+    '/stats',
+    createProxyMiddleware({
+      target: STATS_SERVICE_URL,
+      changeOrigin: true,
+    }),
+  );
+
   // Swagger
   const config = new DocumentBuilder()
     .setTitle('API-GATEWAY')

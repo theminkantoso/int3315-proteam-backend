@@ -36,7 +36,7 @@ export class User extends BaseEntity {
   phone: string;
 
   @Column()
-  @Exclude()
+  // @Exclude()
   role: number;
 
   @Column()

@@ -41,6 +41,9 @@ export class PostResDto {
     @IsString()
     avatar: string;
 
+    @IsNumber()
+    role: number;
+
     @IsArray()
     skills: SkillDto[];
 }
