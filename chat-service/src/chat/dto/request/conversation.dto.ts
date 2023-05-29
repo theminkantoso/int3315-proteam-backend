@@ -1,5 +1,5 @@
 import * as Joi from 'joi';
-import { TEXTAREA_MAX_LENGTH } from 'src/common/constants';
+import { Regex, TEXTAREA_MAX_LENGTH } from 'src/common/constants';
 
 export const ConversationSchema = Joi.object({
   is_inbox: Joi.boolean().required().label('is inbox'),
@@ -17,6 +17,7 @@ export const ConversationSchema = Joi.object({
     .uri()
     .allow(null)
     .label('background'),
+  members: Joi.array().items(Joi.string()).required().label('member'),
 });
 export class ConversationDto {
   readonly is_inbox: boolean;
@@ -25,4 +26,5 @@ export class ConversationDto {
   readonly title: string | null;
   readonly description: string | null;
   readonly background: string | null;
+  members: string[] | null;
 }

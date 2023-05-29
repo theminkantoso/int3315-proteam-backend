@@ -123,11 +123,15 @@ export class ChatController {
   @Post('/conversation')
   @UseGuards(JwtGuard)
   async createConversation(
+    @Request() req,
     @Body(new TrimBodyPipe(), new JoiValidationPipe(ConversationSchema))
     data: ConversationDto,
   ) {
     try {
-      const result = await this.chatService.createConversation(data);
+      const result = await this.chatService.createConversationAndAddMembers(
+        data,
+        req.loginUser.id,
+      );
       return new SuccessResponse(result);
     } catch (error) {
       throw new InternalServerErrorException(error);

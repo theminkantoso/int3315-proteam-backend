@@ -7,6 +7,9 @@ import {
 } from '@nestjs/websockets';
 import { ConfigService } from '@nestjs/config';
 import { Server, Socket } from 'socket.io';
+import { UseGuards } from '@nestjs/common';
+import { WsGuard } from 'src/common/guards/websocket.guard';
+import { ISecureSocket } from './app.socket.gateway';
 
 @WebSocketGateway({
   allowEIO3: true,
@@ -24,13 +27,15 @@ export class SocketGateway
   @WebSocketServer()
   server: Server;
 
-  wsClients = [];
+  wsClients: ISecureSocket[] = [];
 
   afterInit(server: Server) {
     console.log('Init socket server', server);
   }
 
-  handleDisconnect(client: Socket) {
+  @UseGuards(WsGuard)
+  handleDisconnect(client: ISecureSocket) {
+    console.log('socket-client disconnected');
     for (let i = 0; i < this.wsClients.length; i += 1) {
       if (this.wsClients[i].id === client.id) {
         this.wsClients.splice(i, 1);
@@ -39,7 +44,9 @@ export class SocketGateway
     }
   }
 
-  handleConnection(client: Socket) {
+  @UseGuards(WsGuard)
+  handleConnection(client: ISecureSocket) {
+    console.log('socket-client connected');
     this.wsClients.push(client);
   }
 }

@@ -35,6 +35,9 @@ export class Message extends BaseEntity {
   @Column({ default: false })
   is_unsent: boolean;
 
+  @Column({ type: 'timestamp' })
+  create_at: Date;
+
   @ManyToOne(() => User, (user) => user.messages)
   @JoinColumn({ name: 'user_id' })
   user?: User;

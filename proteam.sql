@@ -1,4 +1,4 @@
-CREATE DATABASE  IF NOT EXISTS `proteam` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+CREATE DATABASE  IF NOT EXISTS `proteam` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `proteam`;
 -- MySQL dump 10.13  Distrib 8.0.32, for Win64 (x86_64)
 --
@@ -40,7 +40,7 @@ CREATE TABLE `account` (
   PRIMARY KEY (`account_id`),
   KEY `name` (`name`),
   KEY `school` (`school`)
-) ENGINE=InnoDB AUTO_INCREMENT=10002 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10002 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -56,54 +56,6 @@ INSERT INTO `account` VALUES (9747,'Vo Dang Phi','190209747@vnu.edu.vn','$2b$10$
 UNLOCK TABLES;
 
 --
--- Table structure for table `conversation`
---
-
-DROP TABLE IF EXISTS `conversation`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `conversation` (
-  `conversation_id` int NOT NULL AUTO_INCREMENT,
-  `conversation_name` varchar(100) DEFAULT NULL,
-  `is_read` int DEFAULT NULL COMMENT '0 chưa đọc, 1 đã đọc',
-  PRIMARY KEY (`conversation_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `conversation`
---
-
-LOCK TABLES `conversation` WRITE;
-/*!40000 ALTER TABLE `conversation` DISABLE KEYS */;
-/*!40000 ALTER TABLE `conversation` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `conversation_account`
---
-
-DROP TABLE IF EXISTS `conversation_account`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `conversation_account` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `account_id` int NOT NULL,
-  `conversation_id` int NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `conversation_account`
---
-
-LOCK TABLES `conversation_account` WRITE;
-/*!40000 ALTER TABLE `conversation_account` DISABLE KEYS */;
-/*!40000 ALTER TABLE `conversation_account` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `conversation_users`
 --
 
@@ -114,13 +66,12 @@ CREATE TABLE `conversation_users` (
   `id` int NOT NULL AUTO_INCREMENT,
   `user_id` int NOT NULL,
   `conversation_id` int NOT NULL,
-  `last_message_id` int DEFAULT NULL,
   `seen_last_message` int DEFAULT NULL COMMENT '0 not seen, 1 seen',
   `is_admin` int DEFAULT NULL COMMENT '0 normal, 1 admin',
   `mute` int DEFAULT NULL COMMENT '0 not mute, 1 mute',
   `block` int DEFAULT NULL COMMENT '0 not block, 1 block',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -144,10 +95,11 @@ CREATE TABLE `conversations` (
   `is_inbox` int DEFAULT NULL COMMENT '0 group, 1 inbox',
   `is_conversation_request` int DEFAULT NULL COMMENT '0 connected, 1 request',
   `title` varchar(100) DEFAULT NULL,
+  `last_message_id` int DEFAULT NULL,
   `description` varchar(100) DEFAULT NULL,
   `background` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -175,7 +127,7 @@ CREATE TABLE `files` (
   `mimetype` varchar(255) NOT NULL,
   `size` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -200,7 +152,7 @@ CREATE TABLE `friend_follow` (
   `friend_id` int NOT NULL,
   `status` int NOT NULL DEFAULT '1' COMMENT '1 follow, 2 friend, 3 friend request',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2540 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2540 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -225,7 +177,7 @@ CREATE TABLE `major` (
   `major_name` varchar(100) DEFAULT NULL,
   `school_id` int DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=168 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=168 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -236,33 +188,6 @@ LOCK TABLES `major` WRITE;
 /*!40000 ALTER TABLE `major` DISABLE KEYS */;
 INSERT INTO `major` VALUES (1,'Toan hoc',1),(2,'Toan hoc (CTĐT tai nang)',1),(3,'Toan hoc (CTĐT tien tien)',1),(4,'Toan co',1),(5,'Toan - Tin',1),(6,'Khoa hoc May tinh va thong tin (CTĐT thi diem)',1),(7,'Khoa hoc du lieu (CTĐT thi diem)',1),(8,'Vat ly hoc',1),(9,'Vat ly hoc (CTĐT tai nang)',1),(10,'Vat ly hoc (CTĐT chuan quoc te)',1),(11,'Khoa hoc vat lieu',1),(12,'Cong nghe ky thuat hat nhan',1),(13,'Ki thuat dien tu va tin hoc (CTĐT thi diem)',1),(14,'Hoa hoc',1),(15,'Hoa hoc (CTĐT tai nang)',1),(16,'Hoa hoc (CTĐT tien tien)',1),(17,'Cong nghe ky thuat hoa hoc',1),(18,'Cong nghe ky thuat hoa hoc (CTĐT CLC)',1),(19,'Hoa duoc (CTĐT CLC)',1),(20,'Sinh hoc',1),(21,'Sinh hoc (CTĐT chuan quoc te)',1),(22,'Sinh hoc (CTĐT tai nang)',1),(23,'Cong nghe sinh hoc',1),(24,'Cong nghe sinh hoc (CTĐT CLC)',1),(25,'Đia ly tu nhien',1),(26,'Đia ly tu nhien (CTĐT CLC)',1),(27,'Khoa hoc thong tin dia khong gian (CTĐT thi diem)',1),(28,'Quan ly dat dai',1),(29,'Quan ly phat trien do thi va bat dong san (CTĐT thi diem)',1),(30,'Khoa hoc moi truong',1),(31,'Khoa hoc moi truong (CTĐT tien tien)',1),(32,'Khoa hoc moi truong (CTĐT CLC)',1),(33,'Cong nghe ky thuat moi truong',1),(34,'Cong nghe ky thuat moi truong (CTĐT CLC)',1),(35,'Khoa hoc va cong nghe thuc pham (CTĐT thi diem)',1),(36,'Khi tuong va khi hau hoc',1),(37,'Hai duong hoc',1),(38,'Tai nguyen va moi truong nuoc (CTĐT thi diem)',1),(39,'Đia chat hoc',1),(40,'Đia chat hoc (CTĐT CLC)',1),(41,'Đia chat hoc (CTĐT chuan quoc te)',1),(42,'Ky thuat dia chat',1),(43,'Quan ly tai nguyen va moi truong',1),(44,'Khoa hoc dat',1),(45,'Khi tuong hoc (CTĐT CLC)',1),(46,'Thuy van',1),(47,'Thuy van (CTĐT CLC)',1),(48,'Hai duong hoc (CTĐT CLC)',1),(49,'Cong nghe quan trac va giam sat tai nguyen moi truong (CTĐT thi diem)',1),(50,'Bao chi',2),(51,'Bao chi (CTĐT CLC)',2),(52,'Chinh tri hoc',2),(53,'Cong tac xa hoi',2),(54,'Đong Nam A hoc',2),(55,'Đong phuong hoc',2),(56,'Han Quoc hoc',2),(57,'Han Nom',2),(58,'Khoa hoc quan ly',2),(59,'Khoa hoc quan ly (CTĐT CLC)',2),(60,'Lich su',2),(61,'Luu tru hoc',2),(62,'Ngon ngu hoc',2),(63,'Nhan hoc',2),(64,'Nhat Ban hoc',2),(65,'Quan he cong chung',2),(66,'Quan li thong tin',2),(67,'Quan li thong tin (CTĐT CLC)',2),(68,'Quan tri dich vu du lich va lu hanh',2),(69,'Quan tri khach san',2),(70,'Quan tri van phong',2),(71,'Quoc te hoc',2),(72,'Quoc te hoc (CTĐT CLC)',2),(73,'Tam ly hoc',2),(74,'Thong tin - thu vien',2),(75,'Ton giao hoc',2),(76,'Triet hoc',2),(77,'Van hoa hoc',2),(78,'Van hoc',2),(79,'Viet Nam hoc',2),(80,'Xa hoi hoc',2),(81,'Su pham tieng Anh',3),(82,'Ngon ngu Anh (CTĐT CLC)',3),(83,'Ngon ngu Nga',3),(84,'Ngon ngu Phap (CTĐT CLC)',3),(85,'Su pham tieng Trung Quoc',3),(86,'Ngon ngu Trung Quoc (CTĐT CLC)',3),(87,'Su pham Tieng Đuc',3),(88,'Ngon ngu Đuc (CTĐT CLC)',3),(89,'Su pham tieng Nhat',3),(90,'Ngon ngu Nhat (CTĐT CLC)',3),(91,'Su pham tieng Han Quoc',3),(92,'Ngon ngu Han Quoc (CTĐT CLC)',3),(93,'Ngon ngu Arap',3),(94,'Cong nghe thong tin',4),(95,'Cong nghe thong tin (CTĐT CLC)',4),(96,'Cong nghe thong tin dinh huong thi truong Nhat Ban',4),(97,'Ky thuat may tinh',4),(98,'Ky thuat Robot (CTĐT thi diem)',4),(99,'Ky thuat nang luong (CTĐT thi diem)',4),(100,'Vat ly ky thuat',4),(101,'Co ky thuat',4),(102,'Cong nghe ky thuat xay dung',4),(103,'Cong nghe Hang khong vu tru (CTĐT thi diem)',4),(104,'Ky thuat dieu khien va tu dong hoa',4),(105,'Cong nghe nong nghiep (CTĐT thi diem)',4),(106,'Cong nghe ky thuat co dien tu (CTĐT CLC)',4),(107,'Khoa hoc May tinh (CTĐT CLC)',4),(108,'He thong thong tin (CTĐT CLC)',4),(109,'Mang may tinh va truyen thong du lieu (CTĐT CLC)',4),(110,'Cong nghe ky thuat dien tu - vien thong (CTĐT CLC)',4),(111,'Tri tue nhan tao',4),(112,'Quan tri kinh doanh (CTĐT CLC)',5),(113,'Tai chinh - Ngan hang (CTĐT CLC)',5),(114,'Ke toan (CTĐT CLC)',5),(115,'Kinh te quoc te (CTĐT CLC)',5),(116,'Kinh te (CTĐT CLC)',5),(117,'Kinh te phat trien (CTĐT CLC)',5),(118,'Quan tri kinh doanh (CTĐT danh cho cac tai nang the thao)',5),(119,'Su pham Toan hoc',6),(120,'Su pham Vat ly',6),(121,'Su pham Hoa hoc',6),(122,'Su pham Sinh hoc',6),(123,'Su pham khoa hoc tu nhien',6),(124,'Su pham Ngu van',6),(125,'Su pham Lich su',6),(126,'Su pham lich su va dia li',6),(127,'Quan tri truong hoc',6),(128,'Quan tri cong nghe giao duc',6),(129,'Quan tri chat luong giao duc',6),(130,'Tham van hoc duong',6),(131,'Khoa hoc giao duc',6),(132,'Giao duc tieu hoc',6),(133,'Giao duc mam non',6),(134,'Nhat Ban hoc',7),(135,'Khoa hoc va Ky thuat may tinh (CTĐT CLC)',7),(136,'Nong nghiep thong minh va ben vung (CTĐT CLC)',7),(137,'Ky thuat xay dung (CTĐT CLC)',7),(138,'Y khoa',8),(139,'Duoc hoc',8),(140,'Rang - Ham - Mat (CTĐT CLC)',8),(141,'Đieu duong',8),(142,'Ki thuat hinh anh y hoc',8),(143,'Ki thuat xet nghiem y hoc',8),(144,'Luat',9),(145,'Luat (CTĐT CLC)',9),(146,'Luat kinh doanh',9),(147,'Luat thuong mai quoc te',9),(148,'Kinh doanh quoc te (CTĐT thi diem)',10),(149,'Ke toan, phan tich va kiem toan (CTĐT thi diem)',10),(150,'He thong thong tin quan li (CTĐT thi diem)',10),(151,'Phan tich du lieu kinh doanh (CTĐT thi diem)',10),(152,'Marketing (CTĐT cap bang ĐH cua ĐHQGHN va truong ĐH HELP – Malaysia)',10),(153,'Quan ly (CTĐT cap bang ĐH cua ĐHQGHN va truong ĐH Keuka – Hoa Ky)',10),(154,'Tin hoc va ki thuat may tinh (CTĐT LKQT do ĐHQGHN cap bang)',10),(155,'Ngon ngu Anh (chuyen sau Kinh doanh va Cong nghe thong tin)',10),(156,'Ky su Tu dong hoa va tin hoc',10),(157,'Cong nghe thong tin ung dung',10),(158,'Cong nghe tai chinh va kinh doanh so',10),(159,'Ky thuat he thong cong nghiep va Logistics',10),(160,'Quan tri doanh nghiep va cong nghe',11),(161,'Marketing va Truyen thong',11),(162,'Quan tri Nhan luc va Nhan tai',11),(163,'Quan tri va An ninh',11),(164,'Quan tri thuong hieu (CTĐT thi diem)',12),(165,'Quan tri tai nguyen va di san (CTĐT thi diem)',12),(166,'Quan ly giai tri va su kien',12),(167,'Quan tri do thi thong minh va ben vung',12);
 /*!40000 ALTER TABLE `major` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `message`
---
-
-DROP TABLE IF EXISTS `message`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `message` (
-  `message_id` int NOT NULL AUTO_INCREMENT,
-  `content` varchar(255) DEFAULT NULL,
-  `title` varchar(255) DEFAULT NULL,
-  `timestamp` datetime NOT NULL,
-  `account_id` int NOT NULL,
-  `conversation_id` int NOT NULL,
-  PRIMARY KEY (`message_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `message`
---
-
-LOCK TABLES `message` WRITE;
-/*!40000 ALTER TABLE `message` DISABLE KEYS */;
-/*!40000 ALTER TABLE `message` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -280,8 +205,9 @@ CREATE TABLE `messages` (
   `file` varchar(255) DEFAULT NULL,
   `is_remove` int DEFAULT NULL COMMENT '0 not remove, 1 remove',
   `is_unsent` int DEFAULT NULL COMMENT '0 sent, 1 unsend',
+  `create_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -309,7 +235,7 @@ CREATE TABLE `notification` (
   `type` varchar(100) DEFAULT NULL,
   `notification_token_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`noti_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -335,12 +261,12 @@ CREATE TABLE `notification_tokens` (
   `notification_token` varchar(255) DEFAULT NULL,
   `status` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 LOCK TABLES `notification_tokens` WRITE;
-/*!40000 ALTER TABLE `notification` DISABLE KEYS */;
-/*!40000 ALTER TABLE `notification` ENABLE KEYS */;
+/*!40000 ALTER TABLE `notification_tokens` DISABLE KEYS */;
+/*!40000 ALTER TABLE `notification_tokens` ENABLE KEYS */;
 UNLOCK TABLES;
 
 
@@ -358,7 +284,7 @@ CREATE TABLE `post` (
   `min_gpa` int DEFAULT '0',
   `max_gpa` int DEFAULT '4',
   PRIMARY KEY (`post_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -382,7 +308,7 @@ CREATE TABLE `school` (
   `id` int NOT NULL AUTO_INCREMENT,
   `school_name` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -406,7 +332,7 @@ CREATE TABLE `skill` (
   `skill_id` int NOT NULL AUTO_INCREMENT,
   `skill_name` varchar(255) NOT NULL,
   PRIMARY KEY (`skill_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -431,7 +357,7 @@ CREATE TABLE `skill_account` (
   `account_id` int NOT NULL,
   `skill_id` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16209 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16209 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -456,7 +382,7 @@ CREATE TABLE `skill_post` (
   `skill_id` int NOT NULL,
   `post_id` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -483,7 +409,7 @@ CREATE TABLE `socket_information` (
   `type` enum('socket_id','device_id') DEFAULT NULL,
   `value` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -509,7 +435,7 @@ CREATE TABLE `user_tokens` (
   `token` blob,
   `type` enum('refresh_token','1','2','3') DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --

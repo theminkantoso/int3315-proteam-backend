@@ -88,6 +88,15 @@ async function bootstrap() {
     }),
   );
 
+  // app.use(
+  //   '/web-socket',
+  //   createProxyMiddleware({
+  //     target: CHAT_SERVICE_URL,
+  //     changeOrigin: true,
+  //     ws: true
+  //   })
+  // )
+
   // Swagger
   const config = new DocumentBuilder()
     .setTitle('API-GATEWAY')
