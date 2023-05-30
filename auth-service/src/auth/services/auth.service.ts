@@ -375,6 +375,7 @@ export class AuthService {
         ConfigKey.GOOGLE_CLIENT_SECRET,
       );
       const clientId = this.configService.get(ConfigKey.GOOGLE_CLIENT_ID);
+
       const googleClient = new OAuth2Client({ clientSecret, clientId });
       googleClient.setCredentials({ refresh_token: refreshTokenGmail });
 
