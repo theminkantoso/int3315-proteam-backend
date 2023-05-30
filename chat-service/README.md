@@ -32,7 +32,7 @@
 $ yarn install
 ```
 
-## Running the app
+## Running the app (đọc phần này để chạy!!)
 
 ```bash
 # development

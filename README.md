@@ -26,3 +26,5 @@ Có 6 service
 Tạo CSDL ```proteam``` trong localhost:3308 ```root-123456```
 
 Thêm dữ liệu từ file ```proteam.sql```
+=======
+Lần đầu thì build, lần sau chỉ cần chạy ```docker-compose up -d``` là được.
