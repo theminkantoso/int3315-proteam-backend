@@ -78,7 +78,7 @@ export class User extends BaseEntity {
 
   @ManyToMany(() => Conversation, (conversations) => conversations.users)
   @JoinTable({
-    name: 'user_conversation',
+    name: 'conversation_users',
     joinColumn: { name: 'user_id', referencedColumnName: 'account_id' },
     inverseJoinColumn: { name: 'conversation_id' },
   })

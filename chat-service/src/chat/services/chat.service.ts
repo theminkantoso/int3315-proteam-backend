@@ -1,11 +1,9 @@
-import { User } from '../entities/user.entity';
 import { Injectable } from '@nestjs/common';
-import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
-import { Conversation } from '../entities/conversation.entity';
-import { Message } from '../entities/message.entity';
-import { ConversationUser } from '../entities/conversation_user.entity';
+import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
+import cloneDeep from 'lodash/cloneDeep';
+import { EntityManager, In, Repository } from 'typeorm';
+import { DEFAULT_LIMIT_MESSAGE_QUERY } from '../chat.constants';
 import { ConversationDto } from '../dto/request/conversation.dto';
 import {
   ConversationUserDto,
@@ -16,15 +14,18 @@ import {
   MessageDto,
   UpdateMessageDto,
 } from '../dto/request/mesage.dto';
-import { DEFAULT_LIMIT_MESSAGE_QUERY } from '../chat.constants';
-import { SocketInformation } from '../entities/socket_information.entity';
 import { SocketInformationDto } from '../dto/request/socket-information.dto';
-
+import { Conversation } from '../entities/conversation.entity';
+import { ConversationUser } from '../entities/conversation_user.entity';
+import { Message } from '../entities/message.entity';
+import { SocketInformation } from '../entities/socket_information.entity';
+import { User } from '../entities/user.entity';
 export const conversationAttributes: (keyof Conversation)[] = [
   'id',
   'is_inbox',
   'is_conversation_request',
   'title',
+  'last_message_id',
   'background',
   'description',
 ];
@@ -33,7 +34,6 @@ export const conversationUserAttributes: (keyof ConversationUser)[] = [
   'id',
   'user_id',
   'conversation_id',
-  'last_message_id',
   'is_admin',
   'mute',
   'seen_last_message',
@@ -47,6 +47,7 @@ export const messageAttributes: (keyof Message)[] = [
   'file',
   'is_remove',
   'is_unsent',
+  'create_at',
 ];
 
 export const socketInformationAttributes: (keyof SocketInformation)[] = [
@@ -55,6 +56,13 @@ export const socketInformationAttributes: (keyof SocketInformation)[] = [
   'type',
   'value',
   'status',
+];
+
+export const userAttributes: (keyof User)[] = [
+  'account_id',
+  'avatar',
+  'name',
+  'email',
 ];
 
 @Injectable()
@@ -105,6 +113,60 @@ export class ChatService {
         select: conversationAttributes,
         where: { id: conversationId },
       });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  public async createConversationAndAddMembers(
+    data: ConversationDto,
+    loginUserId: number,
+  ) {
+    try {
+      const member = data.members;
+      const memberInfo = await this.userRepository.find({
+        where: {
+          email: In(member),
+        },
+      });
+
+      const conversationInfo = cloneDeep(data);
+      delete conversationInfo.members;
+
+      let insertedConversation;
+      let insertUsers;
+
+      await this.dbManager.transaction(async (transactionManager) => {
+        insertedConversation = await this.conversationRepository.save(
+          conversationInfo,
+        );
+
+        const conversationUsersInfo: ConversationUserDto[] = memberInfo.map(
+          (item) => {
+            return {
+              user_id: item.account_id,
+              conversation_id: insertedConversation.id,
+              is_admin: false,
+              mute: false,
+              seen_last_message: false,
+            };
+          },
+        );
+
+        conversationUsersInfo.push({
+          user_id: loginUserId,
+          conversation_id: insertedConversation.id,
+          is_admin: true,
+          mute: false,
+          seen_last_message: false,
+        });
+
+        insertUsers = await this.conversationUserRepository.save(
+          conversationUsersInfo,
+        );
+      });
+
+      return { ...insertedConversation, users: insertUsers };
     } catch (error) {
       throw error;
     }
@@ -240,7 +302,10 @@ export class ChatService {
 
   public async createMessage(data: MessageDto) {
     try {
-      const insertedMessage = await this.messageRepository.insert(data);
+      const insertedMessage = await this.messageRepository.insert({
+        ...data,
+        create_at: new Date(),
+      });
       const messageId = insertedMessage.identifiers[0].id;
 
       return await this.messageRepository.findOne({
@@ -316,6 +381,54 @@ export class ChatService {
   public async deleteSocketInformation(id: number) {
     try {
       await this.socketInformationRepository.delete(id);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  public async getAllConversationUserByUserId(id: number) {
+    try {
+      return await this.conversationUserRepository.find({
+        select: conversationUserAttributes,
+        where: { user_id: id },
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  public async getAllConversationByUserId(id: number) {
+    try {
+      const conversationUsers = await this.getAllConversationUserByUserId(id);
+      if (!conversationUsers.length) {
+        return [];
+      }
+      const userInfo = await this.userRepository
+        .createQueryBuilder('account')
+        .innerJoinAndSelect('account.conversations', 'conversations')
+        .leftJoinAndSelect('conversations.users', 'userInConversation')
+        .leftJoinAndSelect('conversations.messages', 'messages')
+        .innerJoinAndMapOne(
+          'conversations.conversationUser',
+          'conversations.conversationUser',
+          'conversationUser',
+          'conversationUser.conversation_id = conversations.id',
+        )
+        .where('account.account_id = :id', { id })
+        .orderBy('messages.id', 'DESC')
+        .getOne();
+
+      const conversations = userInfo.conversations;
+
+      return conversations.map((item) => {
+        return {
+          ...item,
+          users: item.users?.map((user) => {
+            delete user.password;
+            return user;
+          }),
+        };
+      });
     } catch (error) {
       throw error;
     }

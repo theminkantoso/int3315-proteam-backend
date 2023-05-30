@@ -5,6 +5,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import { User } from './user.entity';
 import { Conversation } from './conversation.entity';
@@ -18,9 +19,6 @@ export class ConversationUser extends BaseEntity {
 
   @Column()
   conversation_id: number;
-
-  @Column()
-  last_message_id: number;
 
   @Column({ default: false })
   is_admin: boolean;
