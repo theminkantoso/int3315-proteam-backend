@@ -1,17 +1,17 @@
 import { Module } from '@nestjs/common';
-import { ClientsModule } from '@nestjs/microservices';
-import { Transport } from '@nestjs/microservices/enums';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { mysqlConnectionAsyncConfig } from './config/mysql.config';
+import { PostModule } from './file/post.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    // ClientsModule.register([
-    //   {
-    //     name: 'POST-SERVICE',
-    //     transport: Transport.TCP,
-    //   },
-    // ]),
+    // TypeOrmModule.forRoot(mysqlConnectionConfig),
+    ConfigModule.forRoot({ isGlobal: true }),
+    TypeOrmModule.forRootAsync(mysqlConnectionAsyncConfig),
+    PostModule,
   ],
   controllers: [AppController],
   providers: [AppService],

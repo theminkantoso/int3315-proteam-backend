@@ -17,5 +17,5 @@ COPY . ./
 
 RUN npm run build
 
-EXPOSE 3002
+EXPOSE 3004
 CMD [ "yarn", "start:dev" ]

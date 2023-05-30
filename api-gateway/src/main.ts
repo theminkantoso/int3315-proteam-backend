@@ -1,32 +1,100 @@
 import { NestFactory } from '@nestjs/core';
-import { MicroserviceOptions } from '@nestjs/microservices';
-import { Transport } from '@nestjs/microservices/enums';
 
 import { AppModule } from './app.module';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
-import {createProxyMiddleware} from 'http-proxy-middleware';
-import { Logger } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { createProxyMiddleware } from 'http-proxy-middleware';
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  // const globalPrefix = 'api';
-  // app.setGlobalPrefix(globalPrefix);
+  const app = await NestFactory.create(AppModule, { cors: true });
   const port = process.env.PORT || 3000;
-  const POST_SERVICE_URL = "http://post_service:3001";
-  const CHAT_SERVICE_URL = "http://chat_service:3002";
+  const environment = process.env.ENVIRONMENT;
+
+  const serviceUrl = {
+    auth:
+      environment === 'prod'
+        ? process.env.AUTH_SERVICE
+        : 'http://localhost:3001',
+    user:
+      environment === 'prod'
+        ? process.env.USER_SERVICE
+        : 'http://localhost:3002',
+    post:
+      environment === 'prod'
+        ? process.env.POST_SERVICE
+        : 'http://localhost:3003',
+    chat:
+      environment === 'prod'
+        ? process.env.CHAT_SERVICE
+        : 'http://localhost:3004',
+    noti:
+      environment === 'prod'
+        ? process.env.NOTI_SERVICE
+        : 'http://localhost:3005',
+    stats:
+      environment === 'prod'
+        ? process.env.STATS_SERVICE
+        : 'http://localhost:3006',
+  };
 
   // Proxy endpoints
-  app.use('/posts', createProxyMiddleware({
-    target: POST_SERVICE_URL,
-    changeOrigin: true,
-  }));
+  app.use(
+    '/auth',
+    createProxyMiddleware({
+      target: serviceUrl.auth,
+      changeOrigin: true,
+    }),
+  );
 
-  app.use('/chats', createProxyMiddleware({
-    target: CHAT_SERVICE_URL,
-    changeOrigin: true,
-  }));
+  app.use(
+    '/user',
+    createProxyMiddleware({
+      target: serviceUrl.user,
+      changeOrigin: true,
+    }),
+  );
 
+  app.use(
+    '/posts',
+    createProxyMiddleware({
+      target: serviceUrl.post,
+      changeOrigin: true,
+    }),
+  );
 
+  app.use(
+    '/chats',
+    createProxyMiddleware({
+      target: serviceUrl.chat,
+      changeOrigin: true,
+    }),
+  );
+
+  app.use(
+    '/noti',
+    createProxyMiddleware({
+      target: serviceUrl.noti,
+      changeOrigin: true,
+    }),
+  );
+
+  app.use(
+    '/stats',
+    createProxyMiddleware({
+      target: serviceUrl.stats,
+      changeOrigin: true,
+    }),
+  );
+
+  app.use(
+    '/socket.io',
+    createProxyMiddleware({
+      target: serviceUrl.chat,
+      changeOrigin: true,
+      ws: false,
+    }),
+  );
 
   // Swagger
   const config = new DocumentBuilder()
@@ -38,7 +106,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  
   await app.listen(port);
 }
 bootstrap();

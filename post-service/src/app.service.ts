@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 @Injectable()
 export class AppService {
-  private readonly users: any[] = [];
+  private readonly post: any[] = [];
 
   // constructor(@Inject('API-GATEWAY') private readonly api_gateway: ClientProxy,
   // ) {}
