@@ -8,42 +8,41 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
-  // const globalPrefix = 'api';
-  // app.setGlobalPrefix(globalPrefix);
   const port = process.env.PORT || 3000;
+  const environment = process.env.ENVIRONMENT;
 
-  const AUTH_SERVICE_URL =
-    process.env.ENVIRONMENT == 'docker'
-      ? process.env.AUTH_SERVICE
-      : process.env.AUTH_SERVICE_TUYEN;
-  const USER_SERVICE_URL =
-    process.env.ENVIRONMENT == 'docker'
-      ? process.env.USER_SERVICE
-      : process.env.USER_SERVICE_TUYEN;
-  const POST_SERVICE_URL =
-    process.env.ENVIRONMENT == 'docker'
-      ? process.env.POST_SERVICE
-      : process.env.POST_SERVICE_TUYEN;
-  const CHAT_SERVICE_URL =
-    process.env.ENVIRONMENT == 'docker'
-      ? process.env.CHAT_SERVICE
-      : process.env.CHAT_SERVICE_TUYEN;
-  const NOTI_SERVICE_URL =
-    process.env.ENVIRONMENT == 'docker'
-      ? process.env.NOTI_SERVICE
-      : process.env.NOTI_SERVICE_TUYEN;
-  const STATS_SERVICE_URL =
-    process.env.ENVIRONMENT == 'docker'
-      ? process.env.STATS_SERVICE
-      : process.env.STATS_SERVICE_TUYEN;
-
-  console.log('first', AUTH_SERVICE_URL);
+  const serviceUrl = {
+    auth:
+      environment === 'prod'
+        ? process.env.AUTH_SERVICE
+        : 'http://localhost:3001',
+    user:
+      environment === 'prod'
+        ? process.env.USER_SERVICE
+        : 'http://localhost:3002',
+    post:
+      environment === 'prod'
+        ? process.env.POST_SERVICE
+        : 'http://localhost:3003',
+    chat:
+      environment === 'prod'
+        ? process.env.CHAT_SERVICE
+        : 'http://localhost:3004',
+    noti:
+      environment === 'prod'
+        ? process.env.NOTI_SERVICE
+        : 'http://localhost:3005',
+    stats:
+      environment === 'prod'
+        ? process.env.STATS_SERVICE
+        : 'http://localhost:3006',
+  };
 
   // Proxy endpoints
   app.use(
     '/auth',
     createProxyMiddleware({
-      target: AUTH_SERVICE_URL,
+      target: serviceUrl.auth,
       changeOrigin: true,
     }),
   );
@@ -51,7 +50,7 @@ async function bootstrap() {
   app.use(
     '/user',
     createProxyMiddleware({
-      target: USER_SERVICE_URL,
+      target: serviceUrl.user,
       changeOrigin: true,
     }),
   );
@@ -59,7 +58,7 @@ async function bootstrap() {
   app.use(
     '/posts',
     createProxyMiddleware({
-      target: POST_SERVICE_URL,
+      target: serviceUrl.post,
       changeOrigin: true,
     }),
   );
@@ -67,7 +66,7 @@ async function bootstrap() {
   app.use(
     '/chats',
     createProxyMiddleware({
-      target: CHAT_SERVICE_URL,
+      target: serviceUrl.chat,
       changeOrigin: true,
     }),
   );
@@ -75,7 +74,7 @@ async function bootstrap() {
   app.use(
     '/noti',
     createProxyMiddleware({
-      target: NOTI_SERVICE_URL,
+      target: serviceUrl.noti,
       changeOrigin: true,
     }),
   );
@@ -83,7 +82,7 @@ async function bootstrap() {
   app.use(
     '/stats',
     createProxyMiddleware({
-      target: STATS_SERVICE_URL,
+      target: serviceUrl.stats,
       changeOrigin: true,
     }),
   );

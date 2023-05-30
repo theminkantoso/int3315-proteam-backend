@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { mysqlConnectionAsyncConfig, mysqlConnectionConfig } from './config/mysql.config';
+import { mysqlConnectionAsyncConfig } from './config/mysql.config';
 import { PostModule } from './file/post.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
@@ -11,7 +11,8 @@ import { ConfigModule } from '@nestjs/config';
     // TypeOrmModule.forRoot(mysqlConnectionConfig),
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync(mysqlConnectionAsyncConfig),
-    PostModule],
+    PostModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
