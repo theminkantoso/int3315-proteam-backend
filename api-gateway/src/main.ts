@@ -87,14 +87,14 @@ async function bootstrap() {
     }),
   );
 
-  // app.use(
-  //   '/web-socket',
-  //   createProxyMiddleware({
-  //     target: CHAT_SERVICE_URL,
-  //     changeOrigin: true,
-  //     ws: true
-  //   })
-  // )
+  app.use(
+    '/socket.io',
+    createProxyMiddleware({
+      target: serviceUrl.chat,
+      changeOrigin: true,
+      ws: false,
+    }),
+  );
 
   // Swagger
   const config = new DocumentBuilder()

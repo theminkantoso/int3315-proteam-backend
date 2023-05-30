@@ -3,7 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { mysqlConnectionAsyncConfig } from './config/mysql.config';
-import { NotiModule } from './file/noti.module';
+import { NotiModule } from './noti/noti.module';
 import { ConfigModule } from '@nestjs/config';
 import { NotificationModule } from './notification/notification.module';
 

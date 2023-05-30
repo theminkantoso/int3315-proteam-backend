@@ -6,7 +6,7 @@ import {
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { ConfigService } from '@nestjs/config';
-import { Server, Socket } from 'socket.io';
+import { Server } from 'socket.io';
 import { UseGuards } from '@nestjs/common';
 import { WsGuard } from 'src/common/guards/websocket.guard';
 import { ISecureSocket } from './app.socket.gateway';
