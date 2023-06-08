@@ -39,7 +39,7 @@ export class NotiController {
   @ApiResponse({ status: 200, description: 'List notification of user' })
   @UseGuards(AuthGuard('jwt'))
   @Get('user')
-  async posts(@Req() req: Request) {
+  async posts(@Req() req: any) {
     const acc_id =
       typeof req['user'].id === 'string'
         ? parseInt(req['user'].id)
@@ -51,7 +51,7 @@ export class NotiController {
   @ApiResponse({ status: 200, description: 'notification' })
   @UseGuards(AuthGuard('jwt'))
   @Patch('read/:id')
-  async readNoti(@Req() req: Request, @Query('id', ParseIntPipe) id?: number) {
+  async readNoti(@Req() req: any, @Query('id', ParseIntPipe) id?: number) {
     const acc_id =
       typeof req['user'].id === 'string'
         ? parseInt(req['user'].id)
@@ -80,7 +80,7 @@ export class NotiController {
   @Put('push/enable')
   @ApiResponse({ status: 200, description: 'notification' })
   @UseGuards(AuthGuard('jwt'))
-  async enablePush(@Req() req: Request, @Body() update_dto: NotiFirebaseDto) {
+  async enablePush(@Req() req: any, @Body() update_dto: NotiFirebaseDto) {
     const acc_id =
       typeof req['user'].id === 'string'
         ? parseInt(req['user'].id)
@@ -92,7 +92,7 @@ export class NotiController {
   @ApiResponse({ status: 200, description: 'notification' })
   @UseGuards(AuthGuard('jwt'))
   async disablePush(
-    @Req() req: Request,
+    @Req() req: any,
     @Body() update_dto: UpdateNotiFirebaseDto,
   ) {
     const acc_id =
