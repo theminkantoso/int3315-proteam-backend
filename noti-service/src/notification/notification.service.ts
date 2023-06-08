@@ -1,15 +1,61 @@
 import { Injectable } from '@nestjs/common';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { UpdateNotificationDto } from './dto/update-notification.dto';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Notification } from './entities/notification.entity';
+
+export const notificationAttributes: (keyof Notification)[] = [
+  'noti_id',
+  'account_id',
+  'description',
+  'is_read',
+  'create_time',
+  'type',
+  'notification_token_id',
+];
 
 @Injectable()
 export class NotificationService {
-  create(createNotificationDto: CreateNotificationDto) {
-    return 'This action adds a new notification';
+  constructor(
+    @InjectRepository(Notification)
+    private notificationRepository: Repository<Notification>,
+  ) {}
+
+  async create(createNotificationDto: CreateNotificationDto) {
+    try {
+      const insertedNotification = await this.notificationRepository.insert(
+        createNotificationDto,
+      );
+      const notificationId = insertedNotification.identifiers[0].id;
+
+      return await this.notificationRepository.findOne({
+        select: notificationAttributes,
+        where: { noti_id: notificationId },
+      });
+    } catch (error) {
+      throw error;
+    }
   }
 
-  findAll() {
-    return `This action returns all notification`;
+  async bulkCreate(data: CreateNotificationDto[]) {
+    try {
+      const insertedNotification = await this.notificationRepository.save(data);
+      return insertedNotification;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getAllByUserId(id: number) {
+    const allNotification = await this.notificationRepository.find({
+      where: {
+        account_id: id,
+      },
+      select: notificationAttributes,
+    });
+
+    return allNotification;
   }
 
   findOne(id: number) {

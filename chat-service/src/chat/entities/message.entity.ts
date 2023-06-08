@@ -5,12 +5,10 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
-  OneToMany,
 } from 'typeorm';
 
 import { User } from './user.entity';
 import { Conversation } from './conversation.entity';
-import { ConversationUser } from './conversation_user.entity';
 
 @Entity({ name: 'messages' })
 export class Message extends BaseEntity {

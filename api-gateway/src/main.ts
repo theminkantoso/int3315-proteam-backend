@@ -90,7 +90,7 @@ async function bootstrap() {
   app.use(
     '/socket.io',
     createProxyMiddleware({
-      target: serviceUrl.chat,
+      target: serviceUrl.noti,
       changeOrigin: true,
       ws: false,
     }),

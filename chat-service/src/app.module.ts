@@ -18,6 +18,6 @@ import { WebAppGateway } from './common/services/socket/app.socket.gateway';
     ChatModule,
   ],
   controllers: [AppController],
-  providers: [AppService, SocketGateway, WebAppGateway],
+  providers: [AppService],
 })
 export class AppModule {}

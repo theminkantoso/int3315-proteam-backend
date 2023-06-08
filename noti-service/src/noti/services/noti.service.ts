@@ -8,14 +8,20 @@ import { Constant } from '../constants/message';
 import * as firebase from 'firebase-admin';
 import { NotiToken } from '../entities/noti_token.entities';
 import { NotiFirebaseDto, UpdateNotiFirebaseDto } from '../dtos';
+import { ConversationUser } from '../entities/conversation_user.entity';
+import { NotificationService } from 'src/notification/notification.service';
 
 @Injectable()
 export class NotiService {
   constructor(
     @InjectRepository(Noti) private notiRepository: Repository<Noti>,
     @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(ConversationUser)
+    private conversationUserRepository: Repository<ConversationUser>,
     @InjectRepository(NotiToken)
     private readonly notificationTokenRepo: Repository<NotiToken>,
+
+    private readonly notificationService: NotificationService,
   ) {}
 
   private readonly logger = new Logger(NotiService.name);
@@ -112,14 +118,8 @@ export class NotiService {
   }
 
   async acceptFriend(data: any) {
-    // this.logger.log('Data...', data);
     const req = data['result2'];
     const user = data['user'];
-    // this.logger.log('Friend request...', req);
-    // this.logger.log('Account...', user)
-    // const noti : NotiDto = {account_id: req.friend_id, description: user.name + Constant.ACCEPT_FRIEND, is_read: 0, create_time: new Date(), type: Constant.ACCEPT_FRIEND_KEY + req.id}
-    // this.logger.log(noti.description);
-    // await this.notiRepository.insert(noti);
     this.sendPush(
       req.account_id,
       Constant.ACCEPT_FRIEND_KEY,
@@ -249,4 +249,14 @@ export class NotiService {
       return error;
     }
   };
+
+  public async getAllConversationUserByUserId(id: number) {
+    try {
+      return await this.conversationUserRepository.find({
+        where: { user_id: id },
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
 }

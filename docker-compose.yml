@@ -1,88 +1,88 @@
 version: '3.8'
 services:
-    api_gateway:
-        build: ./api-gateway
-        networks:
-            - mysql
-        ports:
-            - 3000:3000
-        env_file:
-            - ./api-gateway/.env
+    # api_gateway:
+    #     build: ./api-gateway
+    #     networks:
+    #         - mysql
+    #     ports:
+    #         - 3000:3000
+    #     env_file:
+    #         - ./api-gateway/.env
 
-    auth_service:
-        build: ./auth-service
-        networks:
-            - mysql
-        ports:
-            - 3001:3001
-        env_file:
-            - ./auth-service/.env
+    # auth_service:
+    #     build: ./auth-service
+    #     networks:
+    #         - mysql
+    #     ports:
+    #         - 3001:3001
+    #     env_file:
+    #         - ./auth-service/.env
 
-    user_service:
-        build: ./user-service
-        networks:
-            - mysql
-        ports:
-            - 3002:3002
-        depends_on:
-            - mysql
-        env_file:
-            - ./user-service/.env
+    # user_service:
+    #     build: ./user-service
+    #     networks:
+    #         - mysql
+    #     ports:
+    #         - 3002:3002
+    #     depends_on:
+    #         - mysql
+    #     env_file:
+    #         - ./user-service/.env
 
-    chat_service:
-        build: ./chat-service
-        networks:
-            - mysql
-        ports:
-            - 3004:3004
-        env_file:
-            - ./chat-service/.env
+    # chat_service:
+    #     build: ./chat-service
+    #     networks:
+    #         - mysql
+    #     ports:
+    #         - 3004:3004
+    #     env_file:
+    #         - ./chat-service/.env
 
-    post_service:
-        build: ./post-service
-        networks:
-            - mysql
-        ports:
-            - 3003:3003
-        depends_on:
-            - mysql
-        env_file:
-            - ./post-service/.env
+    # post_service:
+    #     build: ./post-service
+    #     networks:
+    #         - mysql
+    #     ports:
+    #         - 3003:3003
+    #     depends_on:
+    #         - mysql
+    #     env_file:
+    #         - ./post-service/.env
 
-    noti_service:
-        build: ./noti-service
-        networks:
-            - mysql
-        ports:
-            - 3005:3005
-        depends_on:
-            - mysql
-        env_file:
-            - ./noti-service/.env
+    # noti_service:
+    #     build: ./noti-service
+    #     networks:
+    #         - mysql
+    #     ports:
+    #         - 3005:3005
+    #     depends_on:
+    #         - mysql
+    #     env_file:
+    #         - ./noti-service/.env
 
-    stats_service:
-        build: ./stats-service
-        networks:
-            - mysql
-        ports:
-            - 3006:3006
-        depends_on:
-            - mysql
-            - redis
-        env_file:
-            - ./stats-service/.env
+    # stats_service:
+    #     build: ./stats-service
+    #     networks:
+    #         - mysql
+    #     ports:
+    #         - 3006:3006
+    #     depends_on:
+    #         - mysql
+    #         - redis
+    #     env_file:
+    #         - ./stats-service/.env
 
-    mysql:
-        image: mysql:8.0.32
-        environment:
-            - MYSQL_ROOT_PASSWORD=123456
-        ports:
-            - 3308:3306
-        networks:
-            - mysql
+    # mysql:
+    #     image: mysql:8.0.32
+    #     environment:
+    #         - MYSQL_ROOT_PASSWORD=123456
+    #     ports:
+    #         - 3308:3306
+    #     networks:
+    #         - mysql
 
-        volumes:
-            - proteam-value:/var/lib/mysql
+    #     volumes:
+    #         - proteam-value:/var/lib/mysql
 
     rabbitmq:
         image: rabbitmq:3.11-management
