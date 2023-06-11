@@ -142,6 +142,7 @@ export class StatsService {
     query.innerJoin(Skill, 'skill', 'skill_account.skill_id = skill.skill_id');
     query.select('skill.skill_name');
     query.addSelect('COUNT(account.account_id)', 'count');
+    query.where("account.role = 0");
   
     if (school != '') {
       query.andWhere("account.school = :school", {school});
@@ -169,7 +170,6 @@ export class StatsService {
       }
       else {}
     }
-    query.where("account.role = 0");
     query.groupBy('skill.skill_id');
     return await query.getRawMany();
   }
