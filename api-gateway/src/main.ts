@@ -51,6 +51,8 @@ async function bootstrap() {
         : 'http://localhost:3006',
   };
 
+  console.log(serviceUrl.auth);
+
   // Proxy endpoints
   app.use(
     '/auth',
