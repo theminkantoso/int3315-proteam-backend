@@ -6,8 +6,21 @@ dotenv.config();
 
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { createProxyMiddleware } from 'http-proxy-middleware';
+import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
+  const corsOptions: CorsOptions = {
+    origin: '*',
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'X-Timezone',
+      'X-Timezone-Name',
+    ],
+    optionsSuccessStatus: 200,
+    methods: ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
+  };
+  app.enableCors(corsOptions);
   const port = process.env.PORT || 3000;
   const environment = process.env.ENVIRONMENT;
 
