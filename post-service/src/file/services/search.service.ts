@@ -39,7 +39,7 @@ export class SearchService {
                 posts.andWhere(':gpa between min_gpa and max_gpa', {gpa: user.gpa});
               }
               if(search.content !== null && search.content !== undefined && search.content !== '') {
-                posts.andWhere("LOWER(content) LIKE LOWER(:content)", { content:`%${search.content}%` })
+                posts.andWhere("LOWER(content) LIKE :content", { content:`%${search.content}%` })
              } if(search.skills != null && search.skills != undefined && search.skills.length > 0) {
                 posts.andWhere(" EXISTS(select skill_id from skill_post where post.post_id=skill_post.post_id and skill_id IN (:list)) ", {list: search.skills})
              }
